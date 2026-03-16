@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Commercial Roofing — Membrane Systems</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+  .col-headers {
+    display: grid;
+    grid-template-columns: 110px 1fr 190px 1fr;
+    padding: 1rem 4rem;
+    border-bottom: 2px solid var(--ink);
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .col-headers span {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-muted);
+    font-weight: 500;
+  }
+
+  /* ── Rows ── */
+  .mem-row {
+    display: grid;
+    grid-template-columns: 110px 1fr 190px 1fr;
+    border-bottom: 1px solid var(--rule);
+    min-height: 180px;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.45s forwards;
+  }
+  .mem-row:nth-child(1) { animation-delay: 0.05s; }
+  .mem-row:nth-child(2) { animation-delay: 0.08s; }
+  .mem-row:nth-child(3) { animation-delay: 0.11s; }
+  .mem-row:nth-child(4) { animation-delay: 0.14s; }
+  .mem-row:nth-child(5) { animation-delay: 0.17s; }
+  .mem-row:nth-child(6) { animation-delay: 0.20s; }
+  .mem-row:hover { background: rgba(255,255,255,0.45); }
+
+  /* ── Type cell ── */
+  .cell-type {
+    border-right: 1px solid var(--rule);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem 0.75rem;
+    gap: 0.5rem;
+    text-align: center;
+  }
+  .mem-abbr {
+    font-family: 'DM Serif Display', serif;
+    font-size: 0.95rem;
+    color: var(--accent);
+    line-height: 1.2;
+  }
+  .mem-standards { display: flex; flex-direction: column; gap: 0.2rem; align-items: center; }
+  .mem-std-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+    background: var(--tag-bg);
+    padding: 0.12rem 0.4rem;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+
+  /* ── Description cell ── */
+  .cell-desc {
+    border-right: 1px solid var(--rule);
+    padding: 1.75rem 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.85rem;
+  }
+  .mem-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1.25;
+  }
+  .mem-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+  .mem-spec { font-size: 0.8rem; color: var(--ink-muted); line-height: 1.65; }
+  .mem-spec strong { color: var(--ink); font-weight: 500; }
+
+  /* ── Cross-section visual cell ── */
+  .cell-visual {
+    border-right: 1px solid var(--rule);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    justify-content: center;
+    align-items: center;
+  }
+  .roof-diag {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--rule);
+  }
+  .rd-layer {
+    display: flex;
+    align-items: center;
+    padding: 5px 8px;
+    gap: 6px;
+    min-height: 22px;
+  }
+  .rd-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    line-height: 1.3;
+    flex: 1;
+  }
+  .rd-thickness {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.45rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    opacity: 0.75;
+    white-space: nowrap;
+  }
+
+  /* Layer backgrounds */
+  .rd-white   { background: #e2dfd8; color: var(--ink); }
+  .rd-gray    { background: #b4b0aa; color: var(--ink); }
+  .rd-black   { background: #2c2926; color: #c8c4be; }
+  .rd-iso     { background: #ede6d0; color: var(--ink-muted); }
+  .rd-vapor   { background: #dce8f4; color: #3a5878; }
+  .rd-deck    { background: #9e9890; color: #f0ede8; }
+  .rd-bitumen { background: #3e3530; color: #b8b0a8; }
+  .rd-cap     { background: #252220; color: #a0988e; }
+  .rd-gravel  { background: #8c8880; color: #f0ede8; }
+  .rd-ply     { background: #c4b87a; color: var(--ink); }
+
+  .diag-caption {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  /* ── Applications cell ── */
+  .cell-suit {
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1.1rem;
+  }
+  .suit-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    margin-bottom: 0.2rem;
+  }
+  .suit-items { display: flex; flex-direction: column; gap: 0.35rem; }
+  .suit-item {
+    font-size: 0.78rem;
+    color: var(--ink);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    line-height: 1.35;
+  }
+  .suit-item::before {
+    content: '';
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+    margin-top: 0.35rem;
+  }
+  .suit-note {
+    font-size: 0.72rem;
+    color: var(--ink-muted);
+    line-height: 1.55;
+    font-style: italic;
+  }
+
+  /* ── Section break ── */
+  .section-head {
+    border-top: 2px solid var(--ink);
+    padding: 2rem 4rem 0;
+  }
+  .section-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    margin-bottom: 0.4rem;
+  }
+  .section-head h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    line-height: 1.2;
+    padding-bottom: 1.5rem;
+  }
+  .section-head h2 em { font-style: italic; color: var(--ink-muted); }
+
+  /* ── Attachment method cards ── */
+  .attach-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-bottom: 1px solid var(--rule);
+  }
+  .attach-card {
+    padding: 1.5rem;
+    border-right: 1px solid var(--rule);
+    opacity: 0;
+    transform: translateY(12px);
+    animation: fadeUp 0.4s forwards;
+  }
+  .attach-card:last-child { border-right: none; }
+  .attach-card:nth-child(1) { animation-delay: 0.05s; }
+  .attach-card:nth-child(2) { animation-delay: 0.10s; }
+  .attach-card:nth-child(3) { animation-delay: 0.15s; }
+  .attach-card:nth-child(4) { animation-delay: 0.20s; }
+  .attach-icon {
+    width: 36px; height: 36px;
+    border-radius: 4px;
+    background: var(--tag-bg);
+    border: 1.5px solid var(--rule);
+    margin-bottom: 1rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .attach-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1rem;
+    font-weight: 400;
+    margin-bottom: 0.6rem;
+    line-height: 1.2;
+  }
+  .attach-detail {
+    font-size: 0.75rem;
+    color: var(--ink-muted);
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+  }
+  .attach-detail strong { color: var(--ink); font-weight: 500; }
+  .attach-badges { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+
+  /* ── Responsive ── */
+  @media (max-width: 960px) {
+    .col-headers { display: none; }
+    .mem-row { grid-template-columns: 1fr; border: 1px solid var(--rule); margin: 0.75rem; border-radius: 4px; min-height: unset; }
+    .cell-type { flex-direction: row; justify-content: flex-start; padding: 1rem 1.5rem; border-right: none; border-bottom: 1px solid var(--rule); gap: 0.75rem; }
+    .cell-desc, .cell-visual, .cell-suit { border-right: none; border-bottom: 1px solid var(--rule); }
+    .attach-grid { grid-template-columns: 1fr 1fr; }
+    .attach-card:nth-child(2n) { border-right: none; }
+    .section-head { padding: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="header-eyebrow">Roofing · Single-Ply &amp; Multi-Ply Systems</div>
+    <h1>Commercial Roofing<br><em>Membrane Systems</em></h1>
+  </div>
+  <div class="header-meta">
+    STANDARDS: ASTM / NRCA<br>RATINGS: FM GLOBAL / UL<br>MIN SLOPE: ¼″:12″<br>CSI: 07 50 00
+  </div>
+</header>
+
+<div class="intro">
+  <p>Commercial roofing membranes are the primary waterproofing layer in low-slope roofing assemblies. Selection is driven by climate, deck type, chemical exposure, and owner lifecycle expectations. Assemblies are rated as complete systems — confirm FM or UL approval for the specific membrane, insulation, and attachment combination before specifying.</p>
+  <div class="intro-stat">
+    <span class="num">6</span>
+    <span class="label">Membrane<br>Types</span>
+  </div>
+</div>
+
+<div class="col-headers">
+  <span>Type</span>
+  <span>Properties &amp; Behavior</span>
+  <span>Cross-Section</span>
+  <span>Applications</span>
+</div>
+
+<div id="membranes">
+
+<!-- TPO -->
+<div class="mem-row">
+  <div class="cell-type">
+    <div class="mem-abbr">TPO</div>
+    <div class="mem-standards">
+      <span class="mem-std-pill">ASTM D6878</span>
+      <span class="mem-std-pill">Single-Ply</span>
+    </div>
+  </div>
+  <div class="cell-desc">
+    <div class="mem-name">Thermoplastic Polyolefin</div>
+    <div class="mem-tags">
+      <span class="tag accent">Most Specified</span>
+      <span class="tag">Heat-Welded Seams</span>
+      <span class="tag">Reflective</span>
+    </div>
+    <div class="mem-spec">
+      <strong>Thickness:</strong> 45, 60, or 80 mil; 60 mil minimum recommended for new construction. Many manufacturers require 60 mil for a full-term warranty.<br>
+      <strong>Seams:</strong> Hot-air welded — creates a monolithic bond stronger than the base sheet. No adhesive at seams.<br>
+      <strong>Color:</strong> White, gray, or tan standard — naturally reflective; meets ENERGY STAR and Cool Roof Rating Council requirements without added coating.<br>
+      <strong>Service life:</strong> 15–25 years typical, dependent on mil thickness and maintenance program.
+    </div>
+  </div>
+  <div class="cell-visual">
+    <div class="roof-diag">
+      <div class="rd-layer rd-white">
+        <span class="rd-label">TPO Membrane</span>
+        <span class="rd-thickness">45–80 mil</span>
+      </div>
+      <div class="rd-layer rd-iso">
+        <span class="rd-label">Polyiso Insulation</span>
+        <span class="rd-thickness">R-20+</span>
+      </div>
+      <div class="rd-layer rd-vapor">
+        <span class="rd-label">Air / Vapor Retarder</span>
+      </div>
+      <div class="rd-layer rd-deck">
+        <span class="rd-label">Structural Deck</span>
+      </div>
+    </div>
+    <div class="diag-caption">Single-ply · hot-air welded seams<br>mech. fastened, adhered, or induction</div>
+  </div>
+  <div class="cell-suit">
+    <div>
+      <div class="suit-label">Typical Applications</div>
+      <div class="suit-items">
+        <span class="suit-item">Large commercial and institutional roofs</span>
+        <span class="suit-item">Schools, distribution centers, big-box retail</span>
+        <span class="suit-item">New construction on steel deck</span>
+        <span class="suit-item">Re-roofing over existing flat insulation</span>
+      </div>
+    </div>
+    <div class="suit-note">Most cost-effective single-ply option for new construction. Avoid direct contact with oils and grease — use PVC at exhaust discharge zones.</div>
+  </div>
+</div>
+
+<!-- EPDM -->
+<div class="mem-row">
+  <div class="cell-type">
+    <div class="mem-abbr">EPDM</div>
+    <div class="mem-standards">
+      <span class="mem-std-pill">ASTM D4637</span>
+      <span class="mem-std-pill">Single-Ply</span>
+    </div>
+  </div>
+  <div class="cell-desc">
+    <div class="mem-name">Ethylene Propylene Diene Monomer</div>
+    <div class="mem-tags">
+      <span class="tag">Adhesive Seams</span>
+      <span class="tag">Rubber</span>
+      <span class="tag">Long Track Record</span>
+    </div>
+    <div class="mem-spec">
+      <strong>Thickness:</strong> 45, 60, or 90 mil; 60 mil recommended for new construction. 90 mil used for high-traffic or ballasted applications.<br>
+      <strong>Seams:</strong> Lap seams bonded with EPDM-compatible splice adhesive and seam tape — not heat-welded. Seam durability is installer- and adhesive-dependent.<br>
+      <strong>Color:</strong> Black standard; white EPDM available at higher cost. Black absorbs solar heat — factor into cooling load calculations in warm climates.<br>
+      <strong>Service life:</strong> 20–30 years; one of the longest proven track records in commercial single-ply roofing.
+    </div>
+  </div>
+  <div class="cell-visual">
+    <div class="roof-diag">
+      <div class="rd-layer rd-black">
+        <span class="rd-label">EPDM Membrane</span>
+        <span class="rd-thickness">45–90 mil</span>
+      </div>
+      <div class="rd-layer rd-iso">
+        <span class="rd-label">Polyiso Insulation</span>
+        <span class="rd-thickness">R-20+</span>
+      </div>
+      <div class="rd-layer rd-vapor">
+        <span class="rd-label">Air / Vapor Retarder</span>
+      </div>
+      <div class="rd-layer rd-deck">
+        <span class="rd-label">Structural Deck</span>
+      </div>
+    </div>
+    <div class="diag-caption">Single-ply · adhesive lap seams<br>ballasted, adhered, or mech. fastened</div>
+  </div>
+  <div class="cell-suit">
+    <div>
+      <div class="suit-label">Typical Applications</div>
+      <div class="suit-items">
+        <span class="suit-item">Low-slope roofs in cold climates</span>
+        <span class="suit-item">Ballasted assemblies on concrete decks</span>
+        <span class="suit-item">Renovation and re-roofing projects</span>
+        <span class="suit-item">Below-grade waterproofing and plaza decks</span>
+      </div>
+    </div>
+    <div class="suit-note">Ballasted EPDM is among the most durable assemblies available — confirm structural deck can support aggregate ballast load (10–12 psf minimum).</div>
+  </div>
+</div>
+
+<!-- PVC -->
+<div class="mem-row">
+  <div class="cell-type">
+    <div class="mem-abbr">PVC</div>
+    <div class="mem-standards">
+      <span class="mem-std-pill">ASTM D6754</span>
+      <span class="mem-std-pill">Single-Ply</span>
+    </div>
+  </div>
+  <div class="cell-desc">
+    <div class="mem-name">Polyvinyl Chloride</div>
+    <div class="mem-tags">
+      <span class="tag">Heat-Welded Seams</span>
+      <span class="tag">Chemical Resistant</span>
+      <span class="tag">Flexible</span>
+    </div>
+    <div class="mem-spec">
+      <strong>Thickness:</strong> 40–80 mil; 50–60 mil typical for commercial applications.<br>
+      <strong>Seams:</strong> Hot-air welded, same process as TPO — monolithic bond at laps. Reliable long-term seam performance.<br>
+      <strong>Chemical resistance:</strong> Resists fats, oils, and grease — preferred over TPO wherever restaurant exhaust, kitchen ventilation, or food-processing discharge is present.<br>
+      <strong>Service life:</strong> 15–25 years; some installations have exceeded 30 years. Contains plasticizers that may migrate over time — verify insulation compatibility.
+    </div>
+  </div>
+  <div class="cell-visual">
+    <div class="roof-diag">
+      <div class="rd-layer rd-gray">
+        <span class="rd-label">PVC Membrane</span>
+        <span class="rd-thickness">40–80 mil</span>
+      </div>
+      <div class="rd-layer rd-iso">
+        <span class="rd-label">Polyiso Insulation</span>
+        <span class="rd-thickness">R-20+</span>
+      </div>
+      <div class="rd-layer rd-vapor">
+        <span class="rd-label">Air / Vapor Retarder</span>
+      </div>
+      <div class="rd-layer rd-deck">
+        <span class="rd-label">Structural Deck</span>
+      </div>
+    </div>
+    <div class="diag-caption">Single-ply · hot-air welded seams<br>mechanically fastened or adhered</div>
+  </div>
+  <div class="cell-suit">
+    <div>
+      <div class="suit-label">Typical Applications</div>
+      <div class="suit-items">
+        <span class="suit-item">Restaurants and commercial kitchen roofs</span>
+        <span class="suit-item">Roofs exposed to grease exhaust discharge</span>
+        <span class="suit-item">Food processing and light industrial</span>
+        <span class="suit-item">Plaza and parking deck waterproofing</span>
+      </div>
+    </div>
+    <div class="suit-note">Higher first cost than TPO. Specify PVC wherever chemical exposure is expected. Confirm plasticizer compatibility with polyiso insulation — some older insulation facer types are incompatible.</div>
+  </div>
+</div>
+
+<!-- SBS Modified Bitumen -->
+<div class="mem-row">
+  <div class="cell-type">
+    <div class="mem-abbr">SBS</div>
+    <div class="mem-standards">
+      <span class="mem-std-pill">ASTM D6163</span>
+      <span class="mem-std-pill">Mod Bit</span>
+    </div>
+  </div>
+  <div class="cell-desc">
+    <div class="mem-name">SBS Modified Bitumen</div>
+    <div class="mem-tags">
+      <span class="tag">Styrene-Butadiene-Styrene</span>
+      <span class="tag">Torch or Cold-Applied</span>
+      <span class="tag">2-Ply System</span>
+    </div>
+    <div class="mem-spec">
+      <strong>Thickness:</strong> Two-ply system — base sheet + cap sheet; total typically 160–200 mil combined.<br>
+      <strong>Application:</strong> Torch-applied (heat-fused) or cold-adhesive. Torch requires certified applicator and fire watch. Cold-apply reduces fire risk on occupied buildings and in low-clearance conditions.<br>
+      <strong>Cold temperature:</strong> SBS rubber modifier provides superior flexibility at low temperatures — better low-temp performance than APP.<br>
+      <strong>Service life:</strong> 15–20 years typical; 20+ with granulated cap sheet and proper maintenance.
+    </div>
+  </div>
+  <div class="cell-visual">
+    <div class="roof-diag">
+      <div class="rd-layer rd-cap">
+        <span class="rd-label">Granule Cap Sheet</span>
+        <span class="rd-thickness">~90 mil</span>
+      </div>
+      <div class="rd-layer rd-bitumen">
+        <span class="rd-label">SBS Base Sheet</span>
+        <span class="rd-thickness">~80 mil</span>
+      </div>
+      <div class="rd-layer rd-iso">
+        <span class="rd-label">Polyiso Insulation</span>
+        <span class="rd-thickness">R-20+</span>
+      </div>
+      <div class="rd-layer rd-deck">
+        <span class="rd-label">Structural Deck</span>
+      </div>
+    </div>
+    <div class="diag-caption">Two-ply · torch or cold-applied<br>base sheet + granule cap sheet</div>
+  </div>
+  <div class="cell-suit">
+    <div>
+      <div class="suit-label">Typical Applications</div>
+      <div class="suit-items">
+        <span class="suit-item">Low-slope roofs in cold or northern climates</span>
+        <span class="suit-item">Occupied buildings (cold-apply option)</span>
+        <span class="suit-item">Re-roofing over existing BUR or mod bit</span>
+        <span class="suit-item">Roof areas with frequent foot traffic</span>
+      </div>
+    </div>
+    <div class="suit-note">Torch application requires a hot-work permit and post-installation fire watch. On occupied buildings, cold-adhesive SBS reduces fire risk and limits VOC exposure to building occupants.</div>
+  </div>
+</div>
+
+<!-- APP Modified Bitumen -->
+<div class="mem-row">
+  <div class="cell-type">
+    <div class="mem-abbr">APP</div>
+    <div class="mem-standards">
+      <span class="mem-std-pill">ASTM D6222</span>
+      <span class="mem-std-pill">Mod Bit</span>
+    </div>
+  </div>
+  <div class="cell-desc">
+    <div class="mem-name">APP Modified Bitumen</div>
+    <div class="mem-tags">
+      <span class="tag">Atactic Polypropylene</span>
+      <span class="tag">Torch Applied Only</span>
+      <span class="tag">Hot Climate</span>
+    </div>
+    <div class="mem-spec">
+      <strong>Thickness:</strong> Two-ply — base sheet + granule cap sheet; total approximately 160–200 mil.<br>
+      <strong>Application:</strong> Torch-fused only. APP cannot be effectively cold-applied — heat is required to achieve proper adhesion and lap bonding.<br>
+      <strong>High-temp performance:</strong> APP modifier resists flow and softening at elevated temperatures — preferred over SBS in hot climates where roof surface temperatures can exceed 150°F.<br>
+      <strong>Service life:</strong> 15–20 years; granulated cap sheet provides UV protection and extends service life.
+    </div>
+  </div>
+  <div class="cell-visual">
+    <div class="roof-diag">
+      <div class="rd-layer rd-cap">
+        <span class="rd-label">Granule Cap Sheet</span>
+        <span class="rd-thickness">~90 mil</span>
+      </div>
+      <div class="rd-layer rd-bitumen">
+        <span class="rd-label">APP Base Sheet</span>
+        <span class="rd-thickness">~80 mil</span>
+      </div>
+      <div class="rd-layer rd-iso">
+        <span class="rd-label">Polyiso Insulation</span>
+        <span class="rd-thickness">R-20+</span>
+      </div>
+      <div class="rd-layer rd-deck">
+        <span class="rd-label">Structural Deck</span>
+      </div>
+    </div>
+    <div class="diag-caption">Two-ply · torch applied only<br>base sheet + granule cap sheet</div>
+  </div>
+  <div class="cell-suit">
+    <div>
+      <div class="suit-label">Typical Applications</div>
+      <div class="suit-items">
+        <span class="suit-item">Hot climates and sun-exposed roofs</span>
+        <span class="suit-item">New construction where torch work is feasible</span>
+        <span class="suit-item">Commercial roofs with heavy rooftop equipment</span>
+        <span class="suit-item">Re-roofing over compatible base sheet</span>
+      </div>
+    </div>
+    <div class="suit-note">Torch-only — requires certified installer and hot-work permit for every application. Not suitable where fire risk cannot be managed or building occupants cannot be protected from fumes.</div>
+  </div>
+</div>
+
+<!-- BUR -->
+<div class="mem-row">
+  <div class="cell-type">
+    <div class="mem-abbr">BUR</div>
+    <div class="mem-standards">
+      <span class="mem-std-pill">ASTM D2178</span>
+      <span class="mem-std-pill">Multi-Ply</span>
+    </div>
+  </div>
+  <div class="cell-desc">
+    <div class="mem-name">Built-Up Roofing</div>
+    <div class="mem-tags">
+      <span class="tag">3–5 Plies</span>
+      <span class="tag">Hot Asphalt or Cold-Applied</span>
+      <span class="tag">Redundant Layers</span>
+    </div>
+    <div class="mem-spec">
+      <strong>Composition:</strong> Multiple alternating plies of reinforcing felt (fiberglass or organic mat per ASTM D2178) and bitumen — hot asphalt (Type III or IV), cold adhesive, or coal-tar pitch — topped with aggregate ballast or mineral cap sheet.<br>
+      <strong>Seams:</strong> Continuous mopped plies with offset laps — no discrete seams. Redundant waterproofing layers.<br>
+      <strong>Ballast:</strong> Gravel or aggregate (¾″ river stone typical) adds UV protection and mechanical protection; adds approximately 10–20 psf dead load.<br>
+      <strong>Service life:</strong> 15–30 years; well-maintained assemblies have exceeded 40 years.
+    </div>
+  </div>
+  <div class="cell-visual">
+    <div class="roof-diag">
+      <div class="rd-layer rd-gravel">
+        <span class="rd-label">Aggregate / Cap Sheet</span>
+        <span class="rd-thickness">Ballast</span>
+      </div>
+      <div class="rd-layer rd-ply">
+        <span class="rd-label">Felt Plies ×3–5</span>
+      </div>
+      <div class="rd-layer rd-bitumen">
+        <span class="rd-label">Hot Bitumen / Mop</span>
+      </div>
+      <div class="rd-layer rd-iso">
+        <span class="rd-label">Insulation</span>
+        <span class="rd-thickness">R-20+</span>
+      </div>
+      <div class="rd-layer rd-deck">
+        <span class="rd-label">Structural Deck</span>
+      </div>
+    </div>
+    <div class="diag-caption">Multi-ply · hot asphalt or cold-applied<br>aggregate ballast or mineral cap</div>
+  </div>
+  <div class="cell-suit">
+    <div>
+      <div class="suit-label">Typical Applications</div>
+      <div class="suit-items">
+        <span class="suit-item">Large flat roofs with structural ballast capacity</span>
+        <span class="suit-item">Industrial and warehouse buildings</span>
+        <span class="suit-item">Replacement-in-kind on existing BUR roofs</span>
+        <span class="suit-item">Rooftop mechanical equipment pads</span>
+      </div>
+    </div>
+    <div class="suit-note">Hot asphalt application produces strong fumes — coordinate with occupants and verify ventilation. Coal-tar pitch is rarely used in new construction and carries significant health concerns. Confirm structural capacity for ballast dead load before specifying.</div>
+  </div>
+</div>
+
+</div><!-- #membranes -->
+
+<!-- ─── ATTACHMENT METHODS ─────────────────────────────── -->
+<div class="section-head">
+  <div class="section-eyebrow">Assembly Design · NRCA Roofing Manual</div>
+  <h2>Attachment <em>Methods</em></h2>
+</div>
+
+<div class="attach-grid">
+
+  <div class="attach-card">
+    <div class="attach-icon">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <line x1="9" y1="3" x2="9" y2="12" stroke="var(--ink-muted)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="6.5" y1="10" x2="9" y2="12.5" stroke="var(--ink-muted)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="11.5" y1="10" x2="9" y2="12.5" stroke="var(--ink-muted)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="4" y1="15" x2="14" y2="15" stroke="var(--ink-muted)" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="attach-name">Mechanically Fastened</div>
+    <div class="attach-detail">
+      <strong>Method:</strong> Membrane is fastened with screws and plates through insulation into the structural deck at lap edges. Membrane field is unfastened.<br><br>
+      <strong>Wind uplift:</strong> Fastener pattern and spacing are engineered to ASCE 7 requirements — corner and perimeter zones require closer fastener spacing than the field.<br><br>
+      Most common for new construction on metal deck. Faster installation than fully adhered; lower material cost.
+    </div>
+    <div class="attach-badges">
+      <span class="tag accent">Most Common</span>
+      <span class="tag">Metal Deck</span>
+      <span class="tag">Faster Install</span>
+    </div>
+  </div>
+
+  <div class="attach-card">
+    <div class="attach-icon" style="background: #e8f0e8; border-color: #b8d8b8;">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <rect x="3" y="5" width="12" height="8" rx="1.5" stroke="#2a6e3f" stroke-width="1.5" fill="none"/>
+        <line x1="3" y1="9" x2="15" y2="9" stroke="#2a6e3f" stroke-width="1" stroke-dasharray="2 2"/>
+      </svg>
+    </div>
+    <div class="attach-name">Fully Adhered</div>
+    <div class="attach-detail">
+      <strong>Method:</strong> Membrane bonded across its full surface to the insulation or substrate using bonding adhesive — no fasteners penetrate the membrane field.<br><br>
+      <strong>Advantage:</strong> Eliminates fastener pull-through risk and thermal bridging at lap fasteners. Required for some FM wind uplift classifications and for use over lightweight concrete decks.<br><br>
+      Higher material and labor cost. Substrate must be clean, dry, flat, and compatible with the adhesive.
+    </div>
+    <div class="attach-badges">
+      <span class="tag">No Fasteners</span>
+      <span class="tag">Higher Wind Rating</span>
+      <span class="tag">Higher Cost</span>
+    </div>
+  </div>
+
+  <div class="attach-card">
+    <div class="attach-icon" style="background: #f4ece0; border-color: #ddd0b8;">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <circle cx="9" cy="8" r="3" stroke="var(--accent)" stroke-width="1.5" fill="none"/>
+        <circle cx="9" cy="8" r="1" fill="var(--accent)"/>
+        <line x1="3" y1="15" x2="15" y2="15" stroke="var(--ink-muted)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="9" y1="11" x2="9" y2="14" stroke="var(--ink-muted)" stroke-width="1" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="attach-name">Ballasted</div>
+    <div class="attach-detail">
+      <strong>Method:</strong> Membrane is loose-laid and held in place by river stone, concrete pavers, or other aggregate ballast — typically 10–12 psf minimum for wind resistance.<br><br>
+      <strong>Deck requirement:</strong> Structural deck must support the ballast dead load — confirm with structural engineer. Most common on cast-in-place concrete decks.<br><br>
+      Fastest installation; membrane is not penetrated and can be inspected or replaced without adhesive removal.
+    </div>
+    <div class="attach-badges">
+      <span class="tag">Concrete Deck</span>
+      <span class="tag">Loose-Laid</span>
+      <span class="tag">Easy Future Access</span>
+    </div>
+  </div>
+
+  <div class="attach-card">
+    <div class="attach-icon" style="background: #faeae0; border-color: #e8c8b0;">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <path d="M4 13 Q6.5 5 9 9 Q11.5 13 14 5" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        <line x1="3" y1="15" x2="15" y2="15" stroke="var(--ink-muted)" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="attach-name">Induction Welded</div>
+    <div class="attach-detail">
+      <strong>Method:</strong> Manufacturer-specific plates are placed below the membrane; an electromagnetic induction tool activates the plates to weld them to the membrane from above — no penetration through the membrane field.<br><br>
+      <strong>Use:</strong> TPO and PVC only. Combines the wind uplift reliability of mechanical fastening with a continuous unpenetrated membrane field.<br><br>
+      Requires manufacturer-certified plates and trained applicator. Higher equipment and labor cost than standard mechanical fastening.
+    </div>
+    <div class="attach-badges">
+      <span class="tag">TPO / PVC Only</span>
+      <span class="tag">No Field Penetrations</span>
+      <span class="tag new">Specialty</span>
+    </div>
+  </div>
+
+</div>
+
+<div class="disclaimer">
+  <p><strong>For reference only.</strong> Roofing assemblies are approved as complete systems — membrane, insulation, fasteners, and deck — under FM Global or UL listing. Wind uplift requirements vary by location, building height, and exposure category per ASCE 7. Minimum slope, drainage design, and flashing details are project-specific. Verify all assembly approvals and warranty requirements with the membrane manufacturer and a licensed roofing consultant before specifying.</p>
+</div>
+
+<footer>
+  <p>ASTM D6878 / D4637 / D6754 / D6163 / D6222 / D2178 &nbsp;|&nbsp; NRCA ROOFING MANUAL &nbsp;|&nbsp; FOR REFERENCE ONLY</p>
+  <a href="../index.html">← ArchOS</a>
+</footer>
+
+</body>
+</html>
