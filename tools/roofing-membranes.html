@@ -156,6 +156,40 @@
     text-align: center;
     line-height: 1.5;
   }
+  .diag-note {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.48rem;
+    color: var(--ink-muted);
+    text-align: center;
+    line-height: 1.5;
+    font-style: italic;
+    border-top: 1px dashed var(--rule);
+    padding-top: 0.4rem;
+    width: 100%;
+  }
+
+  /* ── Manufacturer links ── */
+  .mfr-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    margin-bottom: 0.3rem;
+  }
+  .mfr-links { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+  .mfr-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    color: var(--accent);
+    text-decoration: none;
+    background: var(--tag-bg);
+    padding: 0.15rem 0.5rem;
+    border-radius: 2px;
+    border: 1px solid var(--rule);
+    transition: background 0.15s, color 0.15s;
+  }
+  .mfr-link:hover { background: var(--accent); color: white; }
 
   /* ── Applications cell ── */
   .cell-suit {
@@ -275,6 +309,8 @@
 </head>
 <body>
 
+<nav class="site-nav"><a href="../index.html">ArchOS</a></nav>
+
 <header>
   <div>
     <div class="header-eyebrow">Roofing · Single-Ply &amp; Multi-Ply Systems</div>
@@ -336,13 +372,14 @@
         <span class="rd-thickness">R-20+</span>
       </div>
       <div class="rd-layer rd-vapor">
-        <span class="rd-label">Air / Vapor Retarder</span>
+        <span class="rd-label">Air / Vapor Retarder †</span>
       </div>
       <div class="rd-layer rd-deck">
         <span class="rd-label">Structural Deck</span>
       </div>
     </div>
     <div class="diag-caption">Single-ply · hot-air welded seams<br>mech. fastened, adhered, or induction</div>
+    <div class="diag-note">† Vapor retarder inclusion is climate &amp; use dependent — not always required. Verify with ASHRAE 160 or hygrothermal analysis.</div>
   </div>
   <div class="cell-suit">
     <div>
@@ -355,6 +392,15 @@
       </div>
     </div>
     <div class="suit-note">Most cost-effective single-ply option for new construction. Avoid direct contact with oils and grease — use PVC at exhaust discharge zones.</div>
+    <div>
+      <div class="mfr-label">Major Manufacturers</div>
+      <div class="mfr-links">
+        <a class="mfr-link" href="https://www.elevatecommercialbp.com" target="_blank" rel="noopener">Elevate (Firestone)</a>
+        <a class="mfr-link" href="https://www.gaf.com" target="_blank" rel="noopener">GAF</a>
+        <a class="mfr-link" href="https://www.carlisle-syntec.com" target="_blank" rel="noopener">Carlisle</a>
+        <a class="mfr-link" href="https://www.jm.com" target="_blank" rel="noopener">Johns Manville</a>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -392,13 +438,14 @@
         <span class="rd-thickness">R-20+</span>
       </div>
       <div class="rd-layer rd-vapor">
-        <span class="rd-label">Air / Vapor Retarder</span>
+        <span class="rd-label">Air / Vapor Retarder †</span>
       </div>
       <div class="rd-layer rd-deck">
         <span class="rd-label">Structural Deck</span>
       </div>
     </div>
     <div class="diag-caption">Single-ply · adhesive lap seams<br>ballasted, adhered, or mech. fastened</div>
+    <div class="diag-note">† Vapor retarder inclusion is climate &amp; use dependent — not always required. Verify with ASHRAE 160 or hygrothermal analysis.</div>
   </div>
   <div class="cell-suit">
     <div>
@@ -411,6 +458,15 @@
       </div>
     </div>
     <div class="suit-note">Ballasted EPDM is among the most durable assemblies available — confirm structural deck can support aggregate ballast load (10–12 psf minimum).</div>
+    <div>
+      <div class="mfr-label">Major Manufacturers</div>
+      <div class="mfr-links">
+        <a class="mfr-link" href="https://www.elevatecommercialbp.com" target="_blank" rel="noopener">Elevate (Firestone)</a>
+        <a class="mfr-link" href="https://www.carlisle-syntec.com" target="_blank" rel="noopener">Carlisle</a>
+        <a class="mfr-link" href="https://www.jm.com" target="_blank" rel="noopener">Johns Manville</a>
+        <a class="mfr-link" href="https://www.soprema.us" target="_blank" rel="noopener">Soprema</a>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -448,13 +504,14 @@
         <span class="rd-thickness">R-20+</span>
       </div>
       <div class="rd-layer rd-vapor">
-        <span class="rd-label">Air / Vapor Retarder</span>
+        <span class="rd-label">Air / Vapor Retarder †</span>
       </div>
       <div class="rd-layer rd-deck">
         <span class="rd-label">Structural Deck</span>
       </div>
     </div>
     <div class="diag-caption">Single-ply · hot-air welded seams<br>mechanically fastened or adhered</div>
+    <div class="diag-note">† Vapor retarder inclusion is climate &amp; use dependent — not always required. Verify with ASHRAE 160 or hygrothermal analysis.</div>
   </div>
   <div class="cell-suit">
     <div>
@@ -467,6 +524,15 @@
       </div>
     </div>
     <div class="suit-note">Higher first cost than TPO. Specify PVC wherever chemical exposure is expected. Confirm plasticizer compatibility with polyiso insulation — some older insulation facer types are incompatible.</div>
+    <div>
+      <div class="mfr-label">Major Manufacturers</div>
+      <div class="mfr-links">
+        <a class="mfr-link" href="https://sarnafil.sika.com" target="_blank" rel="noopener">Sika Sarnafil</a>
+        <a class="mfr-link" href="https://www.carlisle-syntec.com" target="_blank" rel="noopener">Carlisle</a>
+        <a class="mfr-link" href="https://www.jm.com" target="_blank" rel="noopener">Johns Manville</a>
+        <a class="mfr-link" href="https://www.soprema.us" target="_blank" rel="noopener">Soprema</a>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -512,6 +578,7 @@
       </div>
     </div>
     <div class="diag-caption">Two-ply · torch or cold-applied<br>base sheet + granule cap sheet</div>
+    <div class="diag-note">Bitumen base sheet provides inherent vapor control — but a separate vapor retarder may still be required in cold or humid climates. Climate &amp; use dependent.</div>
   </div>
   <div class="cell-suit">
     <div>
@@ -524,6 +591,15 @@
       </div>
     </div>
     <div class="suit-note">Torch application requires a hot-work permit and post-installation fire watch. On occupied buildings, cold-adhesive SBS reduces fire risk and limits VOC exposure to building occupants.</div>
+    <div>
+      <div class="mfr-label">Major Manufacturers</div>
+      <div class="mfr-links">
+        <a class="mfr-link" href="https://www.soprema.us" target="_blank" rel="noopener">Soprema</a>
+        <a class="mfr-link" href="https://www.gaf.com" target="_blank" rel="noopener">GAF</a>
+        <a class="mfr-link" href="https://www.polyglass.us" target="_blank" rel="noopener">Polyglass</a>
+        <a class="mfr-link" href="https://www.tremcoroofing.com" target="_blank" rel="noopener">Tremco</a>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -569,6 +645,7 @@
       </div>
     </div>
     <div class="diag-caption">Two-ply · torch applied only<br>base sheet + granule cap sheet</div>
+    <div class="diag-note">Bitumen base sheet provides inherent vapor control — but a separate vapor retarder may still be required in cold or humid climates. Climate &amp; use dependent.</div>
   </div>
   <div class="cell-suit">
     <div>
@@ -581,6 +658,15 @@
       </div>
     </div>
     <div class="suit-note">Torch-only — requires certified installer and hot-work permit for every application. Not suitable where fire risk cannot be managed or building occupants cannot be protected from fumes.</div>
+    <div>
+      <div class="mfr-label">Major Manufacturers</div>
+      <div class="mfr-links">
+        <a class="mfr-link" href="https://www.soprema.us" target="_blank" rel="noopener">Soprema</a>
+        <a class="mfr-link" href="https://www.polyglass.us" target="_blank" rel="noopener">Polyglass</a>
+        <a class="mfr-link" href="https://www.gaf.com" target="_blank" rel="noopener">GAF</a>
+        <a class="mfr-link" href="https://www.tremcoroofing.com" target="_blank" rel="noopener">Tremco</a>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -628,6 +714,7 @@
       </div>
     </div>
     <div class="diag-caption">Multi-ply · hot asphalt or cold-applied<br>aggregate ballast or mineral cap</div>
+    <div class="diag-note">Bitumen plies provide inherent vapor control — but a separate vapor retarder below insulation may still be required in cold or high-humidity conditions. Climate &amp; use dependent.</div>
   </div>
   <div class="cell-suit">
     <div>
@@ -640,6 +727,15 @@
       </div>
     </div>
     <div class="suit-note">Hot asphalt application produces strong fumes — coordinate with occupants and verify ventilation. Coal-tar pitch is rarely used in new construction and carries significant health concerns. Confirm structural capacity for ballast dead load before specifying.</div>
+    <div>
+      <div class="mfr-label">Major Manufacturers</div>
+      <div class="mfr-links">
+        <a class="mfr-link" href="https://www.gaf.com" target="_blank" rel="noopener">GAF</a>
+        <a class="mfr-link" href="https://www.jm.com" target="_blank" rel="noopener">Johns Manville</a>
+        <a class="mfr-link" href="https://www.elevatecommercialbp.com" target="_blank" rel="noopener">Elevate (Firestone)</a>
+        <a class="mfr-link" href="https://www.tremcoroofing.com" target="_blank" rel="noopener">Tremco</a>
+      </div>
+    </div>
   </div>
 </div>
 
