@@ -1,0 +1,1683 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ANSI/BHMA A156.18 — Commercial Hardware Finishes</title>
+    <link rel="stylesheet" href="../style.css" />
+    <style>
+      .col-headers {
+        display: grid;
+        grid-template-columns: 90px 1fr 200px 1fr;
+        padding: 1rem 4rem;
+        border-bottom: 2px solid var(--ink);
+        background: var(--bg);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      .col-headers span {
+        font-family: "DM Mono", monospace;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--ink-muted);
+        font-weight: 500;
+      }
+
+      /* ── Rows ── */
+      .finish-row {
+        display: grid;
+        grid-template-columns: 90px 1fr 200px 1fr;
+        border-bottom: 1px solid var(--rule);
+        min-height: 200px;
+        opacity: 0;
+        transform: translateY(16px);
+        animation: fadeUp 0.45s forwards;
+      }
+      .finish-row:nth-child(1) {
+        animation-delay: 0.05s;
+      }
+      .finish-row:nth-child(2) {
+        animation-delay: 0.08s;
+      }
+      .finish-row:nth-child(3) {
+        animation-delay: 0.11s;
+      }
+      .finish-row:nth-child(4) {
+        animation-delay: 0.14s;
+      }
+      .finish-row:nth-child(5) {
+        animation-delay: 0.17s;
+      }
+      .finish-row:nth-child(6) {
+        animation-delay: 0.2s;
+      }
+      .finish-row:nth-child(7) {
+        animation-delay: 0.23s;
+      }
+      .finish-row:nth-child(8) {
+        animation-delay: 0.26s;
+      }
+      .finish-row:nth-child(9) {
+        animation-delay: 0.29s;
+      }
+      .finish-row:nth-child(10) {
+        animation-delay: 0.32s;
+      }
+      .finish-row:nth-child(11) {
+        animation-delay: 0.35s;
+      }
+      .finish-row:hover {
+        background: rgba(255, 255, 255, 0.45);
+      }
+
+      /* ── Code cell ── */
+      .cell-code {
+        border-right: 1px solid var(--rule);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem 0.75rem;
+        gap: 0.5rem;
+      }
+      .code-number {
+        font-family: "DM Serif Display", serif;
+        font-size: 2rem;
+        color: var(--accent);
+        line-height: 1;
+      }
+
+      /* ── Description cell ── */
+      .cell-desc {
+        border-right: 1px solid var(--rule);
+        padding: 1.75rem 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 0.85rem;
+      }
+      .finish-name {
+        font-family: "DM Serif Display", serif;
+        font-size: 1.25rem;
+        font-weight: 400;
+        line-height: 1.25;
+      }
+      .finish-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+      }
+      .finish-spec {
+        font-size: 0.8rem;
+        color: var(--ink-muted);
+        line-height: 1.65;
+      }
+      .finish-spec strong {
+        color: var(--ink);
+        font-weight: 500;
+      }
+      .us-equiv {
+        font-family: "DM Mono", monospace;
+        font-size: 0.7rem;
+        color: var(--ink-muted);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .us-equiv::before {
+        content: "";
+        display: inline-block;
+        width: 14px;
+        height: 1px;
+        background: var(--rule);
+      }
+
+      /* ── Visual cell ── */
+      .cell-visual {
+        border-right: 1px solid var(--rule);
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        justify-content: center;
+        align-items: center;
+      }
+      .swatch-block {
+        width: 100%;
+        height: 88px;
+        border-radius: 5px;
+        box-shadow:
+          inset 0 1px 4px rgba(255, 255, 255, 0.35),
+          0 2px 8px rgba(0, 0, 0, 0.18);
+        position: relative;
+        overflow: hidden;
+      }
+      .swatch-block::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.12) 0%,
+          transparent 55%,
+          rgba(0, 0, 0, 0.07) 100%
+        );
+      }
+
+      /*
+    Brushed metals (606, 612, 619, 626, 630) use repeating horizontal grain.
+    Polished metals (605, 625, 629) use high-contrast diagonal gradients.
+    Living finishes (609, 613) use layered radial gradients to simulate worn highlights.
+    Color temperature: brass = warm gold · bronze = warm brown · chrome/SS = cool silver · nickel = warm grey
+  */
+
+      /* 605 — Bright Brass: mirror-polished warm gold */
+      .sw-605 {
+        background: linear-gradient(
+          125deg,
+          #f0d050 0%,
+          #d8a828 16%,
+          #eecb48 28%,
+          #b89020 43%,
+          #e8c840 57%,
+          #d4a830 70%,
+          #f0d050 83%,
+          #c8a020 100%
+        );
+      }
+      /* 606 — Satin Brass: brushed warm gold */
+      .sw-606 {
+        background:
+          repeating-linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.10) 0px,
+            rgba(255, 255, 255, 0.07) 1px,
+            transparent 1px,
+            transparent 2px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.07) 0px,
+            rgba(255, 255, 255, 0.05) 1px,
+            transparent 1px,
+            transparent 3px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.06) 0px,
+            rgba(255, 255, 255, 0.04) 1px,
+            transparent 1px,
+            transparent 7px
+          ),
+          linear-gradient(
+            128deg,
+            #2e2408 0%,
+            #6a5414 22%,
+            #a88428 46%,
+            #c8a030 64%,
+            #d8b03a 80%,
+            #c8a030 100%
+          );
+      }
+      /* 609 — Antique Brass: medium warm gold with darker recesses, living finish */
+      .sw-609 {
+        background:
+          radial-gradient(
+            ellipse 58% 48% at 22% 40%,
+            rgba(202, 150, 48, 0.78) 0%,
+            transparent 100%
+          ),
+          radial-gradient(
+            ellipse 42% 52% at 78% 62%,
+            rgba(178, 128, 36, 0.58) 0%,
+            transparent 100%
+          ),
+          radial-gradient(
+            ellipse 32% 36% at 56% 20%,
+            rgba(158, 108, 28, 0.46) 0%,
+            transparent 100%
+          ),
+          radial-gradient(
+            ellipse 26% 30% at 40% 82%,
+            rgba(136, 90, 20, 0.36) 0%,
+            transparent 100%
+          ),
+          #5a3e10;
+      }
+      /* 612 — Satin Bronze: brushed warm medium brown */
+      .sw-612 {
+        background:
+          repeating-linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.11) 0px,
+            rgba(255, 255, 255, 0.06) 1px,
+            transparent 1px,
+            transparent 2px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.08) 0px,
+            rgba(255, 255, 255, 0.05) 1px,
+            transparent 1px,
+            transparent 3px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.06) 0px,
+            rgba(255, 255, 255, 0.04) 1px,
+            transparent 1px,
+            transparent 7px
+          ),
+          linear-gradient(
+            128deg,
+            #1e1208 0%,
+            #482c14 22%,
+            #6e4422 46%,
+            #8a5a2e 64%,
+            #9a6a38 80%,
+            #8c5c2e 100%
+          );
+      }
+      /* 613 — Oil Rubbed Bronze: very dark base, warm bronze radial highlights where surface is worn */
+      .sw-613 {
+        background:
+          radial-gradient(
+            ellipse 60% 50% at 20% 38%,
+            rgba(162, 102, 36, 0.85) 0%,
+            transparent 100%
+          ),
+          radial-gradient(
+            ellipse 45% 55% at 80% 64%,
+            rgba(136, 84, 28, 0.65) 0%,
+            transparent 100%
+          ),
+          radial-gradient(
+            ellipse 35% 40% at 58% 18%,
+            rgba(114, 72, 22, 0.5) 0%,
+            transparent 100%
+          ),
+          radial-gradient(
+            ellipse 28% 32% at 38% 84%,
+            rgba(96, 60, 18, 0.4) 0%,
+            transparent 100%
+          ),
+          #1e1208;
+      }
+      /* 619 — Satin Nickel: brushed warm/yellow-grey, clearly warmer than chrome */
+      .sw-619 {
+        background:
+          repeating-linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.09) 0px,
+            rgba(255, 255, 255, 0.06) 1px,
+            transparent 1px,
+            transparent 2px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.06) 0px,
+            rgba(255, 255, 255, 0.04) 1px,
+            transparent 1px,
+            transparent 3px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.05) 0px,
+            rgba(255, 255, 255, 0.035) 1px,
+            transparent 1px,
+            transparent 5px
+          ),
+          linear-gradient(
+            128deg,
+            #2e2c20 0%,
+            #605c4c 22%,
+            #98948a 46%,
+            #b8b4a6 64%,
+            #ccc8b8 80%,
+            #c0bca8 100%
+          );
+      }
+      /* 622 — Matte Black: flat, non-reflective — no gradient */
+      .sw-622 {
+        background: #1c1c1c;
+      }
+      /* 625 — Bright Chrome: high-contrast mirror-bright, sharp highlight/shadow */
+      .sw-625 {
+        background: linear-gradient(
+          125deg,
+          #fafafa 0%,
+          #e8e8e8 14%,
+          #f8f8f8 26%,
+          #c8c8c8 43%,
+          #f4f4f4 57%,
+          #e6e6e6 70%,
+          #fafafa 83%,
+          #d4d4d4 100%
+        );
+      }
+      /* 626 — Satin Chrome/Brass: brushed silver, barely warm undertone */
+      .sw-626 {
+        background:
+          repeating-linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.08) 0px,
+            rgba(255, 255, 255, 0.06) 1px,
+            transparent 1px,
+            transparent 2px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.06) 0px,
+            rgba(255, 255, 255, 0.04) 1px,
+            transparent 1px,
+            transparent 3px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.05) 0px,
+            rgba(255, 255, 255, 0.03) 1px,
+            transparent 1px,
+            transparent 5px
+          ),
+          linear-gradient(
+            128deg,
+            #28261e 0%,
+            #5a5850 22%,
+            #909088 46%,
+            #b4b2aa 64%,
+            #c8c6be 80%,
+            #bcbab2 100%
+          );
+      }
+      /* 629 — Bright Stainless Steel: mirror-polished cool silver */
+      .sw-629 {
+        background: linear-gradient(
+          125deg,
+          #f8f8f8 0%,
+          #dcdee2 16%,
+          #f6f6f8 28%,
+          #c2c6cc 43%,
+          #f2f4f4 57%,
+          #dcdfe4 70%,
+          #f8f8f8 83%,
+          #ccd0d6 100%
+        );
+      }
+      /* 630 — Satin SS: fine brushing, coolest blue-grey */
+      .sw-630 {
+        background:
+          repeating-linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.08) 0px,
+            rgba(255, 255, 255, 0.055) 1px,
+            transparent 1px,
+            transparent 2px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.055) 0px,
+            rgba(255, 255, 255, 0.04) 1px,
+            transparent 1px,
+            transparent 3px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.045) 0px,
+            rgba(255, 255, 255, 0.03) 1px,
+            transparent 1px,
+            transparent 5px
+          ),
+          linear-gradient(
+            128deg,
+            #26282c 0%,
+            #565a5e 22%,
+            #8e9296 46%,
+            #b4b8ba 64%,
+            #cacecf 80%,
+            #bfc3c5 100%
+          );
+      }
+
+      .swatch-mini-row {
+        display: flex;
+        gap: 4px;
+        width: 100%;
+      }
+      .swatch-mini {
+        flex: 1;
+        height: 20px;
+        border-radius: 2px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.14);
+      }
+      /* 605 — mirror gold range */
+      .sm-605-1 {
+        background: #e8c040;
+      }
+      .sm-605-2 {
+        background: #c89820;
+      }
+      .sm-605-3 {
+        background: #f0d050;
+      }
+      .sm-605-4 {
+        background: #d4a828;
+      }
+      /* 606 — brushed brass tonal range */
+      .sm-606-1 {
+        background: #c8a030;
+      }
+      .sm-606-2 {
+        background: #a87c20;
+      }
+      .sm-606-3 {
+        background: #dab840;
+      }
+      .sm-606-4 {
+        background: #b48c28;
+      }
+      /* 609 — antique brass: dark body to warm gold highlights */
+      .sm-609-1 {
+        background: #7a5c20;
+      }
+      .sm-609-2 {
+        background: #4e3410;
+      }
+      .sm-609-3 {
+        background: #c49030;
+      }
+      .sm-609-4 {
+        background: #5e4018;
+      }
+      /* 612 — satin bronze warm brown */
+      .sm-612-1 {
+        background: #8a6032;
+      }
+      .sm-612-2 {
+        background: #6a4820;
+      }
+      .sm-612-3 {
+        background: #9e7040;
+      }
+      .sm-612-4 {
+        background: #785028;
+      }
+      /* 613 — dark espresso body + warm bronze highlight */
+      .sm-613-1 {
+        background: #3c2818;
+      }
+      .sm-613-2 {
+        background: #1e1008;
+      }
+      .sm-613-3 {
+        background: #7e5428;
+      }
+      .sm-613-4 {
+        background: #2e1e0e;
+      }
+      /* 619 — clearly warm/yellow-grey */
+      .sm-619-1 {
+        background: #beb8a8;
+      }
+      .sm-619-2 {
+        background: #a8a49a;
+      }
+      .sm-619-3 {
+        background: #d0caba;
+      }
+      .sm-619-4 {
+        background: #b4ae9e;
+      }
+      /* 622 — nearly uniform flat dark */
+      .sm-622-1 {
+        background: #202020;
+      }
+      .sm-622-2 {
+        background: #181818;
+      }
+      .sm-622-3 {
+        background: #1e1e1e;
+      }
+      .sm-622-4 {
+        background: #1c1c1c;
+      }
+      /* 625 — near-white mirror range */
+      .sm-625-1 {
+        background: #f4f4f4;
+      }
+      .sm-625-2 {
+        background: #cccccc;
+      }
+      .sm-625-3 {
+        background: #fafafa;
+      }
+      .sm-625-4 {
+        background: #e2e2e2;
+      }
+      /* 626 — warm silver tones */
+      .sm-626-1 {
+        background: #b4b2ac;
+      }
+      .sm-626-2 {
+        background: #a09e98;
+      }
+      .sm-626-3 {
+        background: #c8c6c0;
+      }
+      .sm-626-4 {
+        background: #aaa8a4;
+      }
+      /* 629 — cool bright silver */
+      .sm-629-1 {
+        background: #f0f2f4;
+      }
+      .sm-629-2 {
+        background: #cdd0d6;
+      }
+      .sm-629-3 {
+        background: #f8f8f8;
+      }
+      .sm-629-4 {
+        background: #e0e4e8;
+      }
+      /* 630 — cool blue-grey tonal range */
+      .sm-630-1 {
+        background: #b6babe;
+      }
+      .sm-630-2 {
+        background: #9ea2a6;
+      }
+      .sm-630-3 {
+        background: #caccce;
+      }
+      .sm-630-4 {
+        background: #a8acb0;
+      }
+
+      .swatch-caption {
+        font-family: "DM Mono", monospace;
+        font-size: 0.58rem;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        color: var(--ink-muted);
+        text-align: center;
+        line-height: 1.4;
+      }
+
+      /* ── Suitability cell ── */
+      .cell-suit {
+        padding: 1.75rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 1.1rem;
+      }
+      .suit-label {
+        font-family: "DM Mono", monospace;
+        font-size: 0.6rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--ink-muted);
+        margin-bottom: 0.2rem;
+      }
+      .suit-items {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
+      .suit-item {
+        font-size: 0.78rem;
+        color: var(--ink);
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        line-height: 1.35;
+      }
+      .suit-item::before {
+        content: "";
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--accent);
+        flex-shrink: 0;
+        margin-top: 0.35rem;
+      }
+      .durability-bar {
+        height: 3px;
+        background: var(--rule);
+        border-radius: 2px;
+        overflow: hidden;
+        margin-top: 0.2rem;
+      }
+      .durability-fill {
+        height: 100%;
+        background: var(--accent);
+        border-radius: 2px;
+      }
+      .durability-label {
+        display: flex;
+        justify-content: space-between;
+        font-family: "DM Mono", monospace;
+        font-size: 0.58rem;
+        color: var(--ink-muted);
+        margin-top: 0.25rem;
+      }
+
+      /* ── Compare section ── */
+      .compare-section {
+        padding: 2rem 4rem;
+        border-bottom: 1px solid var(--rule);
+        background: white;
+      }
+      .compare-title {
+        font-family: "DM Mono", monospace;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--ink-muted);
+        margin-bottom: 1.25rem;
+      }
+      .compare-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem 3rem;
+      }
+      .compare-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+      .compare-code {
+        font-family: "DM Mono", monospace;
+        font-size: 0.68rem;
+        font-weight: 500;
+        color: var(--ink);
+        width: 34px;
+        flex-shrink: 0;
+      }
+      .compare-dot {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+      }
+      .compare-bar-wrap {
+        flex: 1;
+        height: 5px;
+        background: var(--rule);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      .compare-bar-fill {
+        height: 100%;
+        background: var(--accent);
+        border-radius: 3px;
+      }
+      .compare-pct {
+        font-family: "DM Mono", monospace;
+        font-size: 0.58rem;
+        color: var(--ink-muted);
+        width: 44px;
+        text-align: right;
+        flex-shrink: 0;
+      }
+
+      /* ── Responsive ── */
+      @media (max-width: 960px) {
+        .col-headers {
+          display: none;
+        }
+        .compare-section {
+          padding: 1.5rem;
+        }
+        .finish-row {
+          grid-template-columns: 1fr;
+          border: 1px solid var(--rule);
+          margin: 0.75rem;
+          border-radius: 4px;
+        }
+        .cell-code {
+          flex-direction: row;
+          justify-content: flex-start;
+          padding: 1rem 1.5rem;
+          border-right: none;
+          border-bottom: 1px solid var(--rule);
+          gap: 0.75rem;
+        }
+        .cell-desc,
+        .cell-visual,
+        .cell-suit {
+          border-right: none;
+          border-bottom: 1px solid var(--rule);
+        }
+        .compare-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>
+        <div class="header-eyebrow">
+          ANSI / BHMA A156.18 · Commercial Finishes
+        </div>
+        <h1>Door<br />Hardware Finishes</h1>
+      </div>
+      <div class="header-meta">
+        STANDARD: A156.18<br />EDITION: 2020<br />SCOPE: ARCHITECTURAL
+        HARDWARE<br />ORG: BUILDERS HARDWARE<br />MANUFACTURERS ASSOC.
+      </div>
+    </header>
+
+    <div class="intro">
+      <p>
+        Commonly specified finishes for commercial and institutional door
+        hardware in North America, covering office, education, healthcare, and
+        government projects. Ordered by finish code. Finish swatches are CSS
+        simulations — always verify against certified BHMA match plates or
+        manufacturer samples before specifying.
+      </p>
+      <div class="intro-stat">
+        <span class="num">11</span>
+        <span class="label">Finishes<br />Covered</span>
+      </div>
+    </div>
+
+    <div class="col-headers">
+      <span>Code</span>
+      <span>Description &amp; Specification</span>
+      <span>Finish Appearance</span>
+      <span>Suitability &amp; Durability</span>
+    </div>
+
+    <div id="finishes">
+      <!-- 605 -->
+      <div class="finish-row">
+        <div class="cell-code">
+          <span class="code-number">605</span>
+        </div>
+        <div class="cell-desc">
+          <div class="finish-name">Bright Brass<br />(Polished)</div>
+          <div class="finish-tags">
+            <span class="tag">Brass Base</span>
+            <span class="tag">Lacquered</span>
+            <span class="tag">High Reflectivity</span>
+          </div>
+          <div class="finish-spec">
+            <strong>Process:</strong> Mirror-buffed brass, lacquered to inhibit
+            tarnishing. The lacquer protects the polish but wears through at
+            high-contact areas over time.<br /><br />
+            <strong>Appearance:</strong> Bright, warm gold with high
+            reflectivity. Classic traditional brass. Shows fingerprints readily.
+            Lacquer wear can create uneven appearance if not maintained.
+          </div>
+          <div class="us-equiv">Former US: US3</div>
+        </div>
+        <div class="cell-visual">
+          <div class="swatch-block sw-605"></div>
+          <div class="swatch-mini-row">
+            <div class="swatch-mini sm-605-1"></div>
+            <div class="swatch-mini sm-605-2"></div>
+            <div class="swatch-mini sm-605-3"></div>
+            <div class="swatch-mini sm-605-4"></div>
+          </div>
+          <div class="swatch-caption">
+            Mirror warm gold<br />polished · lacquered
+          </div>
+        </div>
+        <div class="cell-suit">
+          <div>
+            <div class="suit-label">Best For</div>
+            <div class="suit-items">
+              <span class="suit-item">Traditional and classical interiors</span>
+              <span class="suit-item"
+                >Entry vestibules and lobby focal hardware</span
+              >
+              <span class="suit-item"
+                >Matching polished brass plumbing fixtures</span
+              >
+              <span class="suit-item">Low-traffic decorative applications</span>
+            </div>
+          </div>
+          <div>
+            <div class="suit-label">Durability</div>
+            <div class="durability-bar">
+              <div class="durability-fill" style="width: 62%"></div>
+            </div>
+            <div class="durability-label">
+              <span>Moderate — lacquer wears</span><span>62 / 100</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 606 -->
+      <div class="finish-row">
+        <div class="cell-code">
+          <span class="code-number">606</span>
+        </div>
+        <div class="cell-desc">
+          <div class="finish-name">Satin Brass<br />(Brushed)</div>
+          <div class="finish-tags">
+            <span class="tag">Brass Base</span>
+            <span class="tag">Lacquered</span>
+            <span class="tag">Directional Grain</span>
+          </div>
+          <div class="finish-spec">
+            <strong>Process:</strong> Mechanically brushed brass, lacquered. The
+            brushed grain reduces reflectivity vs. 605 and is more forgiving
+            with fingerprints and light scratches.<br /><br />
+            <strong>Appearance:</strong> Warm gold with a soft, directional
+            brushed texture. Less reflective than 605. Deeper in tone than
+            polished brass — reads more as a warm champagne gold.
+          </div>
+          <div class="us-equiv">Former US: US4</div>
+        </div>
+        <div class="cell-visual">
+          <div class="swatch-block sw-606"></div>
+          <div class="swatch-mini-row">
+            <div class="swatch-mini sm-606-1"></div>
+            <div class="swatch-mini sm-606-2"></div>
+            <div class="swatch-mini sm-606-3"></div>
+            <div class="swatch-mini sm-606-4"></div>
+          </div>
+          <div class="swatch-caption">
+            Satin warm gold<br />brushed · lacquered
+          </div>
+        </div>
+        <div class="cell-suit">
+          <div>
+            <div class="suit-label">Best For</div>
+            <div class="suit-items">
+              <span class="suit-item"
+                >Traditional and transitional interiors</span
+              >
+              <span class="suit-item"
+                >Warm-toned spaces with wood or stone</span
+              >
+              <span class="suit-item"
+                >Matching brushed brass plumbing fixtures</span
+              >
+              <span class="suit-item">Renovation matching legacy US4 spec</span>
+            </div>
+          </div>
+          <div>
+            <div class="suit-label">Durability</div>
+            <div class="durability-bar">
+              <div class="durability-fill" style="width: 62%"></div>
+            </div>
+            <div class="durability-label">
+              <span>Moderate — lacquer wears</span><span>62 / 100</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 609 -->
+      <div class="finish-row">
+        <div class="cell-code">
+          <span class="code-number">609</span>
+        </div>
+        <div class="cell-desc">
+          <div class="finish-name">Antique Brass<br />(Oxidized)</div>
+          <div class="finish-tags">
+            <span class="tag">Brass Base</span>
+            <span class="tag">Living Finish</span>
+            <span class="tag">Oxidized</span>
+          </div>
+          <div class="finish-spec">
+            <strong>Process:</strong> Chemical or mechanical antiquing of brass,
+            then hand-rubbed to highlight relief surfaces. Living finish —
+            changes with use over time.<br /><br />
+            <strong>Appearance:</strong> Medium warm brown-gold with darker
+            recesses and lighter high-contact highlights. Lighter and warmer
+            than oil rubbed bronze (613). Variation between manufacturers is
+            significant.
+          </div>
+          <div class="us-equiv">Former US: US5</div>
+        </div>
+        <div class="cell-visual">
+          <div class="swatch-block sw-609"></div>
+          <div class="swatch-mini-row">
+            <div class="swatch-mini sm-609-1"></div>
+            <div class="swatch-mini sm-609-2"></div>
+            <div class="swatch-mini sm-609-3"></div>
+            <div class="swatch-mini sm-609-4"></div>
+          </div>
+          <div class="swatch-caption">
+            Warm brown-gold<br />living finish · varies over time
+          </div>
+        </div>
+        <div class="cell-suit">
+          <div>
+            <div class="suit-label">Best For</div>
+            <div class="suit-items">
+              <span class="suit-item">Heritage and historic interiors</span>
+              <span class="suit-item"
+                >Traditional and craftsman architecture</span
+              >
+              <span class="suit-item"
+                >Boutique hospitality, warm decorative use</span
+              >
+              <span class="suit-item"
+                >Low-traffic applications where patina is desired</span
+              >
+            </div>
+          </div>
+          <div>
+            <div class="suit-label">Durability</div>
+            <div class="durability-bar">
+              <div class="durability-fill" style="width: 55%"></div>
+            </div>
+            <div class="durability-label">
+              <span>Moderate — living finish</span><span>55 / 100</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 612 -->
+      <div class="finish-row">
+        <div class="cell-code">
+          <span class="code-number">612</span>
+        </div>
+        <div class="cell-desc">
+          <div class="finish-name">Satin Bronze<br />(Brushed)</div>
+          <div class="finish-tags">
+            <span class="tag">Bronze Base</span>
+            <span class="tag">Lacquered</span>
+            <span class="tag">Stable Finish</span>
+          </div>
+          <div class="finish-spec">
+            <strong>Process:</strong> Mechanically brushed bronze, lacquered.
+            Unlike oil rubbed bronze (613), this is a stable finish — it does
+            not intentionally change over time.<br /><br />
+            <strong>Appearance:</strong> Warm medium brown with directional
+            brushed texture. Distinctly darker and browner than brass finishes;
+            lighter and more uniform than oil rubbed bronze (613).
+          </div>
+          <div class="us-equiv">Former US: US10</div>
+        </div>
+        <div class="cell-visual">
+          <div class="swatch-block sw-612"></div>
+          <div class="swatch-mini-row">
+            <div class="swatch-mini sm-612-1"></div>
+            <div class="swatch-mini sm-612-2"></div>
+            <div class="swatch-mini sm-612-3"></div>
+            <div class="swatch-mini sm-612-4"></div>
+          </div>
+          <div class="swatch-caption">
+            Warm medium brown<br />brushed · stable finish
+          </div>
+        </div>
+        <div class="cell-suit">
+          <div>
+            <div class="suit-label">Best For</div>
+            <div class="suit-items">
+              <span class="suit-item"
+                >Warm commercial and institutional interiors</span
+              >
+              <span class="suit-item">Government and civic buildings</span>
+              <span class="suit-item"
+                >Coordination with warm stone or wood palettes</span
+              >
+              <span class="suit-item"
+                >Transitional design requiring bronze warmth</span
+              >
+            </div>
+          </div>
+          <div>
+            <div class="suit-label">Durability</div>
+            <div class="durability-bar">
+              <div class="durability-fill" style="width: 70%"></div>
+            </div>
+            <div class="durability-label">
+              <span>Good</span><span>70 / 100</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 613 -->
+      <div class="finish-row">
+        <div class="cell-code">
+          <span class="code-number">613</span>
+        </div>
+        <div class="cell-desc">
+          <div class="finish-name">Oil Rubbed Dark<br />Oxidized Bronze</div>
+          <div class="finish-tags">
+            <span class="tag">Brass/Bronze Base</span>
+            <span class="tag">Living Finish</span>
+            <span class="tag">Oxidized</span>
+          </div>
+          <div class="finish-spec">
+            <strong>Process:</strong> Chemical oxidization of brass or bronze
+            base, then hand-rubbed to highlight surface relief. Classified as a
+            "living finish" — intentionally changes with use over time.<br /><br />
+            <strong>Appearance:</strong> Deep dark brown with warm bronze
+            highlights on raised areas. Much darker than 612. Color variation is
+            expected and considered part of the aesthetic — not a defect.
+          </div>
+          <div class="us-equiv">Former US: US10B</div>
+        </div>
+        <div class="cell-visual">
+          <div class="swatch-block sw-613"></div>
+          <div class="swatch-mini-row">
+            <div class="swatch-mini sm-613-1"></div>
+            <div class="swatch-mini sm-613-2"></div>
+            <div class="swatch-mini sm-613-3"></div>
+            <div class="swatch-mini sm-613-4"></div>
+          </div>
+          <div class="swatch-caption">
+            Deep dark brown-bronze<br />living finish · varies over time
+          </div>
+        </div>
+        <div class="cell-suit">
+          <div>
+            <div class="suit-label">Best For</div>
+            <div class="suit-items">
+              <span class="suit-item"
+                >Hospitality, boutique, heritage buildings</span
+              >
+              <span class="suit-item"
+                >Warm traditional or craftsman interiors</span
+              >
+              <span class="suit-item"
+                >Low-to-medium traffic interior doors</span
+              >
+              <span class="suit-item"
+                >Projects where patina variation is desired</span
+              >
+            </div>
+          </div>
+          <div>
+            <div class="suit-label">Durability</div>
+            <div class="durability-bar">
+              <div class="durability-fill" style="width: 60%"></div>
+            </div>
+            <div class="durability-label">
+              <span>Moderate — living finish</span><span>60 / 100</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 619 -->
+      <div class="finish-row">
+        <div class="cell-code">
+          <span class="code-number">619</span>
+        </div>
+        <div class="cell-desc">
+          <div class="finish-name">Satin Nickel<br />Plated over Brass</div>
+          <div class="finish-tags">
+            <span class="tag">Brass Base</span>
+            <span class="tag">Nickel Plated</span>
+            <span class="tag">Warm Neutral</span>
+          </div>
+          <div class="finish-spec">
+            <strong>Process:</strong> Satin (brushed) nickel electroplating over
+            brass base. Nickel plating produces a slightly warmer, greyer tone
+            than chromium.<br /><br />
+            <strong>Appearance:</strong> Warm grey with slight yellow-grey
+            undertone. Brushed texture. Noticeably warmer than 630 and 626 —
+            closer to aged pewter in tone. Popular in hospitality and
+            residential-grade commercial.
+          </div>
+          <div class="us-equiv">Former US: US15</div>
+        </div>
+        <div class="cell-visual">
+          <div class="swatch-block sw-619"></div>
+          <div class="swatch-mini-row">
+            <div class="swatch-mini sm-619-1"></div>
+            <div class="swatch-mini sm-619-2"></div>
+            <div class="swatch-mini sm-619-3"></div>
+            <div class="swatch-mini sm-619-4"></div>
+          </div>
+          <div class="swatch-caption">
+            Warm grey · nickel tone<br />brushed · slightly golden
+          </div>
+        </div>
+        <div class="cell-suit">
+          <div>
+            <div class="suit-label">Best For</div>
+            <div class="suit-items">
+              <span class="suit-item"
+                >Hospitality &amp; multi-family residential</span
+              >
+              <span class="suit-item">Warm contemporary interiors</span>
+              <span class="suit-item"
+                >Boutique office &amp; mixed-use projects</span
+              >
+              <span class="suit-item"
+                >Coordination with warm metal palettes</span
+              >
+            </div>
+          </div>
+          <div>
+            <div class="suit-label">Durability</div>
+            <div class="durability-bar">
+              <div class="durability-fill" style="width: 68%"></div>
+            </div>
+            <div class="durability-label">
+              <span>Good</span><span>68 / 100</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 622 -->
+      <div class="finish-row">
+        <div class="cell-code">
+          <span class="code-number">622</span>
+        </div>
+        <div class="cell-desc">
+          <div class="finish-name">Matte Black</div>
+          <div class="finish-tags">
+            <span class="tag">Any Base</span>
+            <span class="tag">Black Paint/PVD</span>
+            <span class="tag new">Growing Use</span>
+          </div>
+          <div class="finish-spec">
+            <strong>Process:</strong> Flat black paint, powder coat, or PVD
+            (Physical Vapor Deposition) applied over any base material. PVD
+            variants are significantly more durable than paint or powder
+            coat.<br /><br />
+            <strong>Appearance:</strong> Flat to satin matte black with no
+            reflectivity. One of the fastest-growing commercial finishes driven
+            by modern and industrial design trends.
+          </div>
+          <div class="us-equiv">Former US: US19 (approx.)</div>
+        </div>
+        <div class="cell-visual">
+          <div class="swatch-block sw-622"></div>
+          <div class="swatch-mini-row">
+            <div class="swatch-mini sm-622-1"></div>
+            <div class="swatch-mini sm-622-2"></div>
+            <div class="swatch-mini sm-622-3"></div>
+            <div class="swatch-mini sm-622-4"></div>
+          </div>
+          <div class="swatch-caption">
+            Flat matte black<br />non-reflective · modern
+          </div>
+        </div>
+        <div class="cell-suit">
+          <div>
+            <div class="suit-label">Best For</div>
+            <div class="suit-items">
+              <span class="suit-item"
+                >Modern, industrial, or minimal interiors</span
+              >
+              <span class="suit-item">Mixed-use, retail, boutique office</span>
+              <span class="suit-item"
+                >Contrast accent against light doors/frames</span
+              >
+              <span class="suit-item">Specify PVD variant for durability</span>
+            </div>
+          </div>
+          <div>
+            <div class="suit-label">Durability (PVD)</div>
+            <div class="durability-bar">
+              <div class="durability-fill" style="width: 80%"></div>
+            </div>
+            <div class="durability-label">
+              <span>Very Good (PVD) / Low (paint)</span><span>80 / 100</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 625 -->
+      <div class="finish-row">
+        <div class="cell-code">
+          <span class="code-number">625</span>
+        </div>
+        <div class="cell-desc">
+          <div class="finish-name">
+            Bright Chromium<br />Polished (Polished Chrome)
+          </div>
+          <div class="finish-tags">
+            <span class="tag">Brass/Bronze Base</span>
+            <span class="tag">Polished Chrome</span>
+            <span class="tag">High Reflectivity</span>
+          </div>
+          <div class="finish-spec">
+            <strong>Process:</strong> Mirror-buffed chromium electroplating over
+            brass or bronze base. No brushing — surface is polished to full
+            reflectivity before plating.<br /><br />
+            <strong>Appearance:</strong> Highly reflective, mirror-like silver.
+            Shows fingerprints and smudges readily. Common in restrooms and
+            high-visibility accent applications.
+          </div>
+          <div class="us-equiv">Former US: US26</div>
+        </div>
+        <div class="cell-visual">
+          <div class="swatch-block sw-625"></div>
+          <div class="swatch-mini-row">
+            <div class="swatch-mini sm-625-1"></div>
+            <div class="swatch-mini sm-625-2"></div>
+            <div class="swatch-mini sm-625-3"></div>
+            <div class="swatch-mini sm-625-4"></div>
+          </div>
+          <div class="swatch-caption">
+            Mirror-bright silver<br />highly reflective · shows prints
+          </div>
+        </div>
+        <div class="cell-suit">
+          <div>
+            <div class="suit-label">Best For</div>
+            <div class="suit-items">
+              <span class="suit-item">Restrooms &amp; accessible hardware</span>
+              <span class="suit-item">Accent or feature doors in lobbies</span>
+              <span class="suit-item">Matching polished plumbing fixtures</span>
+              <span class="suit-item"
+                >Light-use, high-visibility applications</span
+              >
+            </div>
+          </div>
+          <div>
+            <div class="suit-label">Durability</div>
+            <div class="durability-bar">
+              <div class="durability-fill" style="width: 62%"></div>
+            </div>
+            <div class="durability-label">
+              <span>Moderate</span><span>62 / 100</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 626 -->
+      <div class="finish-row">
+        <div class="cell-code">
+          <span class="code-number">626</span>
+        </div>
+        <div class="cell-desc">
+          <div class="finish-name">Satin Chromium<br />over Brass/Bronze</div>
+          <div class="finish-tags">
+            <span class="tag">Brass/Bronze Base</span>
+            <span class="tag">Chrome Plated</span>
+            <span class="tag accent">Spec Grade</span>
+          </div>
+          <div class="finish-spec">
+            <strong>Process:</strong> Satin (brushed) chromium electroplating
+            over brass or bronze base. Premium substrate improves plating
+            adhesion and longevity over steel-base chrome.<br /><br />
+            <strong>Appearance:</strong> Warm silver-grey with subtle brushed
+            texture. Slight warm undertone from brass base — visually warmer
+            than 630, cooler than nickel. Can appear nearly identical to 630 on
+            screen; the difference is clear in person.
+          </div>
+          <div class="us-equiv">Former US: US26D</div>
+        </div>
+        <div class="cell-visual">
+          <div class="swatch-block sw-626"></div>
+          <div class="swatch-mini-row">
+            <div class="swatch-mini sm-626-1"></div>
+            <div class="swatch-mini sm-626-2"></div>
+            <div class="swatch-mini sm-626-3"></div>
+            <div class="swatch-mini sm-626-4"></div>
+          </div>
+          <div class="swatch-caption">
+            Warm silver-grey<br />brushed · brass base
+          </div>
+        </div>
+        <div class="cell-suit">
+          <div>
+            <div class="suit-label">Best For</div>
+            <div class="suit-items">
+              <span class="suit-item"
+                >Office &amp; admin — premium interior spec</span
+              >
+              <span class="suit-item"
+                >Matching existing brass-base hardware</span
+              >
+              <span class="suit-item"
+                >Higher ed public corridors &amp; lobbies</span
+              >
+              <span class="suit-item">Renovation matching legacy US26D</span>
+            </div>
+          </div>
+          <div>
+            <div class="suit-label">Durability</div>
+            <div class="durability-bar">
+              <div class="durability-fill" style="width: 72%"></div>
+            </div>
+            <div class="durability-label">
+              <span>Good</span><span>72 / 100</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 629 -->
+      <div class="finish-row">
+        <div class="cell-code">
+          <span class="code-number">629</span>
+        </div>
+        <div class="cell-desc">
+          <div class="finish-name">Bright Stainless Steel<br />(Polished)</div>
+          <div class="finish-tags">
+            <span class="tag">SS 300 Series</span>
+            <span class="tag">No Plating</span>
+            <span class="tag">High Reflectivity</span>
+          </div>
+          <div class="finish-spec">
+            <strong>Process:</strong> Mirror-polished 300-series stainless
+            steel. No plating — the finish IS the material. Unlike 630, the
+            polished surface shows scratches more readily.<br /><br />
+            <strong>Appearance:</strong> Highly reflective bright silver with a
+            cool, steely tone. Slightly cooler than polished chrome (625). Shows
+            fingerprints readily. Predominantly used for design-forward
+            applications.
+          </div>
+          <div class="us-equiv">Former US: US32</div>
+        </div>
+        <div class="cell-visual">
+          <div class="swatch-block sw-629"></div>
+          <div class="swatch-mini-row">
+            <div class="swatch-mini sm-629-1"></div>
+            <div class="swatch-mini sm-629-2"></div>
+            <div class="swatch-mini sm-629-3"></div>
+            <div class="swatch-mini sm-629-4"></div>
+          </div>
+          <div class="swatch-caption">
+            Mirror-bright cool silver<br />polished SS · no plating
+          </div>
+        </div>
+        <div class="cell-suit">
+          <div>
+            <div class="suit-label">Best For</div>
+            <div class="suit-items">
+              <span class="suit-item">Contemporary and modern interiors</span>
+              <span class="suit-item"
+                >High-visibility accent and feature hardware</span
+              >
+              <span class="suit-item"
+                >Matching polished SS architectural elements</span
+              >
+              <span class="suit-item">Design-forward lobbies and entries</span>
+            </div>
+          </div>
+          <div>
+            <div class="suit-label">Durability</div>
+            <div class="durability-bar">
+              <div class="durability-fill" style="width: 88%"></div>
+            </div>
+            <div class="durability-label">
+              <span>Excellent — polished surface scratches</span
+              ><span>88 / 100</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 630 -->
+      <div class="finish-row">
+        <div class="cell-code">
+          <span class="code-number">630</span>
+        </div>
+        <div class="cell-desc">
+          <div class="finish-name">Satin Stainless Steel<br />(Brushed)</div>
+          <div class="finish-tags">
+            <span class="tag">SS 300 Series</span>
+            <span class="tag">No Plating</span>
+            <span class="tag accent">Commercial Standard</span>
+          </div>
+          <div class="finish-spec">
+            <strong>Process:</strong> Mechanical brushing of 300-series
+            stainless steel. No plating — the finish IS the material. Cannot
+            corrode, chip, or peel under normal conditions.<br /><br />
+            <strong>Appearance:</strong> Cool, uniform silver-grey with
+            consistent directional brushed texture. Slightly cooler/bluer tone
+            than 626. Most consistent appearance across all manufacturers.
+          </div>
+          <div class="us-equiv">Former US: US32D</div>
+        </div>
+        <div class="cell-visual">
+          <div class="swatch-block sw-630"></div>
+          <div class="swatch-mini-row">
+            <div class="swatch-mini sm-630-1"></div>
+            <div class="swatch-mini sm-630-2"></div>
+            <div class="swatch-mini sm-630-3"></div>
+            <div class="swatch-mini sm-630-4"></div>
+          </div>
+          <div class="swatch-caption">
+            Cool silver-grey<br />uniform directional brush
+          </div>
+        </div>
+        <div class="cell-suit">
+          <div>
+            <div class="suit-label">Best For</div>
+            <div class="suit-items">
+              <span class="suit-item"
+                >Higher ed — standard new construction spec</span
+              >
+              <span class="suit-item"
+                >High-traffic corridors &amp; egress doors</span
+              >
+              <span class="suit-item"
+                >Healthcare, labs, clean environments</span
+              >
+              <span class="suit-item"
+                >Exterior-adjacent &amp; vestibule doors</span
+              >
+            </div>
+          </div>
+          <div>
+            <div class="suit-label">Durability</div>
+            <div class="durability-bar">
+              <div class="durability-fill" style="width: 95%"></div>
+            </div>
+            <div class="durability-label">
+              <span>Excellent</span><span>95 / 100</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- #finishes -->
+
+    <!-- DURABILITY COMPARISON -->
+    <div class="compare-section">
+      <div class="compare-title">
+        Durability Comparison — All Eleven Finishes
+      </div>
+      <div class="compare-grid">
+        <div class="compare-row">
+          <span class="compare-code">630</span>
+          <div
+            class="compare-dot"
+            style="
+              background: repeating-linear-gradient(
+                90deg,
+                #9ca0a5,
+                #c6cacd 2px,
+                #9ea2a6 4px
+              );
+            "
+          ></div>
+          <div class="compare-bar-wrap">
+            <div class="compare-bar-fill" style="width: 95%"></div>
+          </div>
+          <span class="compare-pct">95 / 100</span>
+        </div>
+        <div class="compare-row">
+          <span class="compare-code">629</span>
+          <div
+            class="compare-dot"
+            style="background: linear-gradient(135deg, #f6f6f8, #ccd0d6)"
+          ></div>
+          <div class="compare-bar-wrap">
+            <div class="compare-bar-fill" style="width: 88%"></div>
+          </div>
+          <span class="compare-pct">88 / 100</span>
+        </div>
+        <div class="compare-row">
+          <span class="compare-code">622</span>
+          <div class="compare-dot" style="background: #1c1c1c"></div>
+          <div class="compare-bar-wrap">
+            <div class="compare-bar-fill" style="width: 80%"></div>
+          </div>
+          <span class="compare-pct">80 / 100 PVD</span>
+        </div>
+        <div class="compare-row">
+          <span class="compare-code">626</span>
+          <div
+            class="compare-dot"
+            style="
+              background: repeating-linear-gradient(
+                90deg,
+                #a09e98,
+                #c6c4be 2px,
+                #a2a09a 4px
+              );
+            "
+          ></div>
+          <div class="compare-bar-wrap">
+            <div class="compare-bar-fill" style="width: 72%"></div>
+          </div>
+          <span class="compare-pct">72 / 100</span>
+        </div>
+        <div class="compare-row">
+          <span class="compare-code">612</span>
+          <div
+            class="compare-dot"
+            style="
+              background: repeating-linear-gradient(
+                90deg,
+                #7a5228,
+                #9e6e3c 2px,
+                #7c5428 4px
+              );
+            "
+          ></div>
+          <div class="compare-bar-wrap">
+            <div class="compare-bar-fill" style="width: 70%"></div>
+          </div>
+          <span class="compare-pct">70 / 100</span>
+        </div>
+        <div class="compare-row">
+          <span class="compare-code">619</span>
+          <div
+            class="compare-dot"
+            style="
+              background: repeating-linear-gradient(
+                90deg,
+                #a8a49a,
+                #ccc8bc 2px,
+                #a6a29a 4px
+              );
+            "
+          ></div>
+          <div class="compare-bar-wrap">
+            <div class="compare-bar-fill" style="width: 68%"></div>
+          </div>
+          <span class="compare-pct">68 / 100</span>
+        </div>
+        <div class="compare-row">
+          <span class="compare-code">605</span>
+          <div
+            class="compare-dot"
+            style="background: linear-gradient(135deg, #f0d050, #c8a020)"
+          ></div>
+          <div class="compare-bar-wrap">
+            <div class="compare-bar-fill" style="width: 62%"></div>
+          </div>
+          <span class="compare-pct">62 / 100</span>
+        </div>
+        <div class="compare-row">
+          <span class="compare-code">606</span>
+          <div
+            class="compare-dot"
+            style="
+              background: repeating-linear-gradient(
+                90deg,
+                #b08820,
+                #d8b040 2px,
+                #b48c24 4px
+              );
+            "
+          ></div>
+          <div class="compare-bar-wrap">
+            <div class="compare-bar-fill" style="width: 62%"></div>
+          </div>
+          <span class="compare-pct">62 / 100</span>
+        </div>
+        <div class="compare-row">
+          <span class="compare-code">625</span>
+          <div
+            class="compare-dot"
+            style="background: linear-gradient(135deg, #fafafa, #c8c8c8)"
+          ></div>
+          <div class="compare-bar-wrap">
+            <div class="compare-bar-fill" style="width: 62%"></div>
+          </div>
+          <span class="compare-pct">62 / 100</span>
+        </div>
+        <div class="compare-row">
+          <span class="compare-code">613</span>
+          <div
+            class="compare-dot"
+            style="
+              background: radial-gradient(
+                ellipse at 35% 35%,
+                #8a5c28 0%,
+                #3a2010 55%,
+                #1e1008 100%
+              );
+            "
+          ></div>
+          <div class="compare-bar-wrap">
+            <div class="compare-bar-fill" style="width: 60%"></div>
+          </div>
+          <span class="compare-pct">60 / 100</span>
+        </div>
+        <div class="compare-row">
+          <span class="compare-code">609</span>
+          <div
+            class="compare-dot"
+            style="
+              background: radial-gradient(
+                ellipse at 35% 35%,
+                #c49030 0%,
+                #7a5c20 55%,
+                #4e3410 100%
+              );
+            "
+          ></div>
+          <div class="compare-bar-wrap">
+            <div class="compare-bar-fill" style="width: 55%"></div>
+          </div>
+          <span class="compare-pct">55 / 100</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      <p>
+        <strong
+          >Finish swatches are CSS approximations for quick visual reference
+          only.</strong
+        >
+        626, 630, and 619 can appear nearly identical on screen — in person, 630
+        reads distinctly cooler/bluer, 626 has a warm undertone, and 619 reads
+        notably warmer/grey. Similarly, 605 and 629 are very close on screen but
+        differ in tone. For living finishes (609, 613), variation between
+        manufacturers and over time is significant. Always verify against
+        certified BHMA match plates or manufacturer finish chips before
+        specifying. Request samples from your hardware distributor.
+      </p>
+    </div>
+
+    <footer>
+      <p>
+        ANSI/BHMA A156.18 — 2020 EDITION &nbsp;|&nbsp; FOR REFERENCE ONLY
+        &nbsp;|&nbsp; VERIFY WITH MANUFACTURER SAMPLES BEFORE SPECIFYING
+      </p>
+      <a href="../index.html">← ArchOS</a>
+    </footer>
+  </body>
+</html>

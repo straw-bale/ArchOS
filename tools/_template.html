@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PAGE TITLE — ArchOS</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+  /*
+  ┌──────────────────────────────────────────────────────────────┐
+  │  Add page-specific styles here.                              │
+  │  Global tokens (--bg, --ink, --accent, etc.) are available   │
+  │  from style.css. Header, footer, intro, tags, disclaimer     │
+  │  are already styled — just use the markup below.             │
+  └──────────────────────────────────────────────────────────────*/
+</style>
+</head>
+<body>
+
+<!-- ── Header ───────────────────────────────────────────────
+  eyebrow: short all-caps label, e.g. "ASTM · Material Standard"
+  h1: two lines. Second line wrapped in <em> for italic/muted style.
+  header-meta: right-side mono metadata block.
+-->
+<header>
+  <div>
+    <div class="header-eyebrow">CATEGORY · SUBCATEGORY</div>
+    <h1>Primary Title<br><em>Secondary Title</em></h1>
+  </div>
+  <div class="header-meta">
+    KEY: VALUE<br>KEY: VALUE<br>KEY: VALUE
+  </div>
+</header>
+
+<!-- ── Intro band ────────────────────────────────────────────
+  Optional. Remove if not needed.
+  intro-stat: pull-out number on the right — useful for "X items", etc.
+-->
+<div class="intro">
+  <p>One or two sentences describing the purpose and scope of this page. Keep it tight — what it is, who it's for, and any caveats about using it for real specifications.</p>
+  <div class="intro-stat">
+    <span class="num">0</span>
+    <span class="label">Stat Label<br>Line Two</span>
+  </div>
+</div>
+
+<!-- ── Page content ──────────────────────────────────────────
+  Replace this section with your page-specific content.
+  Use the shared tokens for color/type consistency.
+
+  Available tag variants:
+    <span class="tag">Default</span>
+    <span class="tag accent">Accent (orange)</span>
+    <span class="tag new">New (green)</span>
+-->
+
+<div style="padding: 4rem; color: var(--ink-muted); font-family: 'DM Mono', monospace; font-size: 0.75rem; text-align: center; border-bottom: 1px solid var(--rule);">
+  [ page content goes here ]
+</div>
+
+<!-- ── Disclaimer ────────────────────────────────────────────
+  Optional. Use when content is for reference only and
+  shouldn't be directly applied without verification.
+-->
+<div class="disclaimer">
+  <p><strong>For reference only.</strong> Verify all specifications with the relevant standard, manufacturer documentation, or your project's AHJ before applying to a project.</p>
+</div>
+
+<!-- ── Footer ───────────────────────────────────────────────
+  Update the left text with the relevant standard/edition info.
+  footer-logo: short identifier for this page (standard number, acronym, etc.)
+-->
+<footer>
+  <p>STANDARD / EDITION &nbsp;|&nbsp; FOR REFERENCE ONLY</p>
+  <a href="../index.html">← ArchOS</a>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Door Hardware — Lockset Functions & Core Types</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+  .col-headers {
+    display: grid;
+    grid-template-columns: 110px 1fr 190px 1fr;
+    padding: 1rem 4rem;
+    border-bottom: 2px solid var(--ink);
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .col-headers span {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-muted);
+    font-weight: 500;
+  }
+
+  /* ── Rows ── */
+  .fn-row {
+    display: grid;
+    grid-template-columns: 110px 1fr 190px 1fr;
+    border-bottom: 1px solid var(--rule);
+    min-height: 180px;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.45s forwards;
+  }
+  .fn-row:nth-child(1) { animation-delay: 0.05s; }
+  .fn-row:nth-child(2) { animation-delay: 0.08s; }
+  .fn-row:nth-child(3) { animation-delay: 0.11s; }
+  .fn-row:nth-child(4) { animation-delay: 0.14s; }
+  .fn-row:nth-child(5) { animation-delay: 0.17s; }
+  .fn-row:nth-child(6) { animation-delay: 0.20s; }
+  .fn-row:nth-child(7) { animation-delay: 0.23s; }
+  .fn-row:nth-child(8) { animation-delay: 0.26s; }
+  .fn-row:hover { background: rgba(255,255,255,0.45); }
+
+  /* ── Code cell ── */
+  .cell-code {
+    border-right: 1px solid var(--rule);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem 0.75rem;
+    gap: 0.5rem;
+    text-align: center;
+  }
+  .fn-abbr {
+    font-family: 'DM Serif Display', serif;
+    font-size: 0.95rem;
+    color: var(--accent);
+    line-height: 1.2;
+  }
+  .fn-codes { display: flex; flex-direction: column; gap: 0.2rem; align-items: center; }
+  .fn-code-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+    background: var(--tag-bg);
+    padding: 0.12rem 0.4rem;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+
+  /* ── Description cell ── */
+  .cell-desc {
+    border-right: 1px solid var(--rule);
+    padding: 1.75rem 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.85rem;
+  }
+  .fn-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1.25;
+  }
+  .fn-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+  .fn-spec { font-size: 0.8rem; color: var(--ink-muted); line-height: 1.65; }
+  .fn-spec strong { color: var(--ink); font-weight: 500; }
+
+  /* ── Door diagram cell ── */
+  .cell-visual {
+    border-right: 1px solid var(--rule);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    justify-content: center;
+    align-items: center;
+  }
+  .door-diag {
+    width: 100%;
+    height: 84px;
+    display: grid;
+    grid-template-columns: 1fr 11px 1fr;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--rule);
+  }
+  .diag-out {
+    background: var(--tag-bg);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 5px; padding: 6px;
+  }
+  .diag-door { background: var(--ink); }
+  .diag-in {
+    background: white;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 5px; padding: 6px;
+  }
+  .diag-side-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+  }
+  .dp {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.53rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 2px 6px;
+    border-radius: 2px;
+    line-height: 1.4;
+    text-align: center;
+  }
+  .dp-free   { background: #e0f0e8; color: #2a6e3f; }
+  .dp-key    { background: #fae8dc; color: #c8440a; }
+  .dp-locked { background: #f4dfd4; color: #9e3008; }
+  .dp-btn    { background: #e4ecf4; color: #3a5878; }
+  .dp-coin   { background: var(--tag-bg); color: var(--ink-muted); border: 1px solid var(--rule); }
+  .dp-none   { background: var(--tag-bg); color: var(--ink-muted); }
+  .diag-caption {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  /* ── Applications cell ── */
+  .cell-suit {
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1.1rem;
+  }
+  .suit-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    margin-bottom: 0.2rem;
+  }
+  .suit-items { display: flex; flex-direction: column; gap: 0.35rem; }
+  .suit-item {
+    font-size: 0.78rem;
+    color: var(--ink);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    line-height: 1.35;
+  }
+  .suit-item::before {
+    content: '';
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+    margin-top: 0.35rem;
+  }
+  .suit-note {
+    font-size: 0.72rem;
+    color: var(--ink-muted);
+    line-height: 1.55;
+    font-style: italic;
+  }
+
+  /* ── Section break ── */
+  .section-head {
+    border-top: 2px solid var(--ink);
+    padding: 2rem 4rem 0;
+  }
+  .section-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    margin-bottom: 0.4rem;
+  }
+  .section-head h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    line-height: 1.2;
+    padding-bottom: 1.5rem;
+  }
+  .section-head h2 em { font-style: italic; color: var(--ink-muted); }
+
+  /* ── Core cards ── */
+  .cores-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    border-bottom: 1px solid var(--rule);
+  }
+  .core-card {
+    padding: 1.5rem;
+    border-right: 1px solid var(--rule);
+    opacity: 0;
+    transform: translateY(12px);
+    animation: fadeUp 0.4s forwards;
+  }
+  .core-card:last-child { border-right: none; }
+  .core-card:nth-child(1) { animation-delay: 0.05s; }
+  .core-card:nth-child(2) { animation-delay: 0.10s; }
+  .core-card:nth-child(3) { animation-delay: 0.15s; }
+  .core-card:nth-child(4) { animation-delay: 0.20s; }
+  .core-card:nth-child(5) { animation-delay: 0.25s; }
+  .core-icon {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--tag-bg);
+    border: 1.5px solid var(--rule);
+    margin-bottom: 1rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .core-icon::after {
+    content: '';
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--ink-muted);
+  }
+  .core-icon.ic::after { background: var(--accent); }
+  .core-icon.temp::after {
+    background: transparent;
+    width: 14px; height: 14px;
+    border: 2px dashed #a08030;
+  }
+  .core-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1rem;
+    font-weight: 400;
+    margin-bottom: 0.6rem;
+    line-height: 1.2;
+  }
+  .core-detail {
+    font-size: 0.75rem;
+    color: var(--ink-muted);
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+  }
+  .core-detail strong { color: var(--ink); font-weight: 500; }
+  .core-badges { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+
+  /* ── Grades ── */
+  .grades-section {
+    padding: 2rem 4rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .grades-intro {
+    font-size: 0.82rem;
+    color: var(--ink-muted);
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0.25rem 0 1.25rem;
+  }
+  .grades-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+  .grade-card {
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .grade-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--rule);
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .grade-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .grade-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    line-height: 1.5;
+  }
+  .grade-body { padding: 1rem 1.25rem; }
+  .grade-spec { font-size: 0.78rem; color: var(--ink-muted); line-height: 1.6; }
+  .grade-spec strong { color: var(--ink); font-weight: 500; }
+  .grade-bar { height: 3px; background: var(--rule); border-radius: 2px; margin: 0.75rem 0 0.3rem; overflow: hidden; }
+  .grade-bar-fill { height: 100%; background: var(--accent); border-radius: 2px; }
+  .grade-bar-label {
+    display: flex; justify-content: space-between;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--ink-muted);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 960px) {
+    .col-headers { display: none; }
+    .fn-row { grid-template-columns: 1fr; border: 1px solid var(--rule); margin: 0.75rem; border-radius: 4px; min-height: unset; }
+    .cell-code { flex-direction: row; justify-content: flex-start; padding: 1rem 1.5rem; border-right: none; border-bottom: 1px solid var(--rule); gap: 0.75rem; }
+    .cell-desc, .cell-visual, .cell-suit { border-right: none; border-bottom: 1px solid var(--rule); }
+    .cores-grid { grid-template-columns: 1fr 1fr; }
+    .core-card:nth-child(2n) { border-right: none; }
+    .grades-grid { grid-template-columns: 1fr; }
+    .section-head, .grades-section { padding: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="header-eyebrow">Hardware Schedule Reference · ANSI/BHMA A156</div>
+    <h1>Door Lockset<br><em>Functions & Cores</em></h1>
+  </div>
+  <div class="header-meta">
+    STANDARD: A156.2 / A156.13<br>CYLINDERS: A156.30<br>GRADES: A156.2 / A156.13<br>ORG: BHMA / ANSI
+  </div>
+</header>
+
+<div class="intro">
+  <p>Lockset functions define the operational behavior of each opening — which side requires a key, which side is always free for egress, and how the latch and deadbolt interact. Functions apply across mortise (A156.13) and cylindrical (A156.2) platforms; exact codes and behavior vary by manufacturer and series. Always verify against manufacturer cut sheets before specifying.</p>
+  <div class="intro-stat">
+    <span class="num">8</span>
+    <span class="label">Core<br>Functions</span>
+  </div>
+</div>
+
+<div class="col-headers">
+  <span>Function</span>
+  <span>Description &amp; Behavior</span>
+  <span>Door Diagram</span>
+  <span>Applications</span>
+</div>
+
+<div id="functions">
+
+<!-- PASSAGE -->
+<div class="fn-row">
+  <div class="cell-code">
+    <div class="fn-abbr">Passage</div>
+    <div class="fn-codes">
+      <span class="fn-code-pill">A156.13 F01</span>
+      <span class="fn-code-pill">A156.2 Passage</span>
+    </div>
+  </div>
+  <div class="cell-desc">
+    <div class="fn-name">Passage</div>
+    <div class="fn-tags">
+      <span class="tag">No Lock</span>
+      <span class="tag">Latchbolt Only</span>
+      <span class="tag">Both Sides Free</span>
+    </div>
+    <div class="fn-spec">
+      <strong>Outside:</strong> Lever always retracts latchbolt. No cylinder, no lock mechanism.<br>
+      <strong>Inside:</strong> Lever always retracts latchbolt. No lock mechanism.<br><br>
+      Latchbolt holds door closed but provides no security. Either side opens freely at all times. No key required or possible.
+    </div>
+  </div>
+  <div class="cell-visual">
+    <div class="door-diag">
+      <div class="diag-out">
+        <span class="diag-side-label">Outside</span>
+        <span class="dp dp-free">Free</span>
+      </div>
+      <div class="diag-door"></div>
+      <div class="diag-in">
+        <span class="diag-side-label">Inside</span>
+        <span class="dp dp-free">Free</span>
+      </div>
+    </div>
+    <div class="diag-caption">No key · no lock<br>latchbolt holds door closed</div>
+  </div>
+  <div class="cell-suit">
+    <div>
+      <div class="suit-label">Typical Applications</div>
+      <div class="suit-items">
+        <span class="suit-item">Interior corridors between rooms in a suite</span>
+        <span class="suit-item">Closets and storage (low security)</span>
+        <span class="suit-item">Conference rooms with separate card access</span>
+        <span class="suit-item">Mechanical / AHU rooms (non-secured)</span>
+      </div>
+    </div>
+    <div class="suit-note">No security function. If access control is required, pair with a card reader and electric strike — specify passage trim on the lockset.</div>
+  </div>
+</div>
+
+<!-- CLASSROOM -->
+<div class="fn-row">
+  <div class="cell-code">
+    <div class="fn-abbr">Class&shy;room</div>
+    <div class="fn-codes">
+      <span class="fn-code-pill">A156.13 F02</span>
+      <span class="fn-code-pill">A156.2 Classroom</span>
+    </div>
+  </div>
+  <div class="cell-desc">
+    <div class="fn-name">Classroom</div>
+    <div class="fn-tags">
+      <span class="tag">Key Outside</span>
+      <span class="tag accent">Inside Always Free</span>
+      <span class="tag">Egress</span>
+    </div>
+    <div class="fn-spec">
+      <strong>Outside:</strong> Outside lever is deadlocked. Key in outside cylinder momentarily retracts latchbolt — key does not hold the lever unlocked after release.<br>
+      <strong>Inside:</strong> Inside lever is always free. Egress is never impeded.<br><br>
+      Security staff can lock the room from the corridor without entering. Occupants always exit freely. Cannot be locked from the inside.
+    </div>
+  </div>
+  <div class="cell-visual">
+    <div class="door-diag">
+      <div class="diag-out">
+        <span class="diag-side-label">Outside</span>
+        <span class="dp dp-locked">Locked</span>
+        <span class="dp dp-key" style="font-size:0.47rem">Key Entry</span>
+      </div>
+      <div class="diag-door"></div>
+      <div class="diag-in">
+        <span class="diag-side-label">Inside</span>
+        <span class="dp dp-free">Free</span>
+      </div>
+    </div>
+    <div class="diag-caption">Outside locked · key to enter<br>inside always free</div>
+  </div>
+  <div class="cell-suit">
+    <div>
+      <div class="suit-label">Typical Applications</div>
+      <div class="suit-items">
+        <span class="suit-item">K–12 and higher education classrooms</span>
+        <span class="suit-item">Examination and testing rooms</span>
+        <span class="suit-item">Conference rooms (lockable from corridor)</span>
+        <span class="suit-item">Healthcare exam and procedure rooms</span>
+      </div>
+    </div>
+    <div class="suit-note">IBC/life safety: inside lever must always be free for egress. Locking is from the corridor only — never from inside.</div>
+  </div>
+</div>
+
+<!-- STOREROOM -->
+<div class="fn-row">
+  <div class="cell-code">
+    <div class="fn-abbr">Store&shy;room</div>
+    <div class="fn-codes">
+      <span class="fn-code-pill">A156.13 F04</span>
+      <span class="fn-code-pill">A156.2 Storeroom</span>
+    </div>
+  </div>
+  <div class="cell-desc">
+    <div class="fn-name">Storeroom</div>
+    <div class="fn-tags">
+      <span class="tag accent">Always Locked</span>
+      <span class="tag">Key Every Entry</span>
+      <span class="tag">Inside Free</span>
+    </div>
+    <div class="fn-spec">
+      <strong>Outside:</strong> Outside lever is permanently deadlocked. Key is required on every entry — key does not hold the lever unlocked after release.<br>
+      <strong>Inside:</strong> Inside lever is always free. Egress never impeded.<br><br>
+      Highest security of any standard lockset function. Cannot be unlocked from inside. No way to enter without a key, ever.
+    </div>
+  </div>
+  <div class="cell-visual">
+    <div class="door-diag">
+      <div class="diag-out">
+        <span class="diag-side-label">Outside</span>
+        <span class="dp dp-locked">Always<br>Locked</span>
+      </div>
+      <div class="diag-door"></div>
+      <div class="diag-in">
+        <span class="diag-side-label">Inside</span>
+        <span class="dp dp-free">Free</span>
+      </div>
+    </div>
+    <div class="diag-caption">Outside always locked<br>key required every entry</div>
+  </div>
+  <div class="cell-suit">
+    <div>
+      <div class="suit-label">Typical Applications</div>
+      <div class="suit-items">
+        <span class="suit-item">Storage rooms and supply closets</span>
+        <span class="suit-item">Server rooms and IDF / MDF closets</span>
+        <span class="suit-item">Electrical and mechanical rooms (secured)</span>
+        <span class="suit-item">Drug storage — pharmacy and healthcare</span>
+      </div>
+    </div>
+    <div class="suit-note">Commonly paired with access control for higher-security rooms where an audit trail is also required.</div>
+  </div>
+</div>
+
+<!-- OFFICE -->
+<div class="fn-row">
+  <div class="cell-code">
+    <div class="fn-abbr">Office</div>
+    <div class="fn-codes">
+      <span class="fn-code-pill">A156.13 F05</span>
+      <span class="fn-code-pill">A156.2 Office</span>
+    </div>
+  </div>
+  <div class="cell-desc">
+    <div class="fn-name">Office</div>
+    <div class="fn-tags">
+      <span class="tag">Button Locks Outside</span>
+      <span class="tag">Key Overrides</span>
+      <span class="tag">Inside Free</span>
+    </div>
+    <div class="fn-spec">
+      <strong>Outside:</strong> Normally free. Inside pushbutton or thumbturn deadlocks the outside lever. Key from outside always overrides, regardless of button state.<br>
+      <strong>Inside:</strong> Lever always free. Pushbutton or thumbturn on inside rose locks the outside lever.<br><br>
+      Occupant controls privacy from inside. Turning the inside lever to exit also releases the button lock.
+    </div>
+  </div>
+  <div class="cell-visual">
+    <div class="door-diag">
+      <div class="diag-out">
+        <span class="diag-side-label">Outside</span>
+        <span class="dp dp-key">Key or<br>Free</span>
+      </div>
+      <div class="diag-door"></div>
+      <div class="diag-in">
+        <span class="diag-side-label">Inside</span>
+        <span class="dp dp-btn">Button<br>Locks</span>
+      </div>
+    </div>
+    <div class="diag-caption">Inside button locks outside<br>key always overrides</div>
+  </div>
+  <div class="cell-suit">
+    <div>
+      <div class="suit-label">Typical Applications</div>
+      <div class="suit-items">
+        <span class="suit-item">Private offices and faculty offices</span>
+        <span class="suit-item">Counseling and interview rooms</span>
+        <span class="suit-item">Hotel guestrooms (office variant)</span>
+        <span class="suit-item">Break rooms and single-occupancy spaces</span>
+      </div>
+    </div>
+    <div class="suit-note">Outside is normally free. For an always-locked outside, use Storeroom. For key-only outside entry, use Entrance.</div>
+  </div>
+</div>
+
+<!-- ENTRANCE -->
+<div class="fn-row">
+  <div class="cell-code">
+    <div class="fn-abbr">En&shy;trance</div>
+    <div class="fn-codes">
+      <span class="fn-code-pill">A156.13 F07</span>
+      <span class="fn-code-pill">A156.2 Entrance</span>
+    </div>
+  </div>
+  <div class="cell-desc">
+    <div class="fn-name">Entrance</div>
+    <div class="fn-tags">
+      <span class="tag">Key Outside</span>
+      <span class="tag">Thumbturn Inside</span>
+      <span class="tag">Latch + Deadbolt</span>
+    </div>
+    <div class="fn-spec">
+      <strong>Outside:</strong> Key retracts both latchbolt and deadbolt simultaneously. Entry by key only.<br>
+      <strong>Inside:</strong> Lever always retracts latchbolt freely. Thumbturn (or inside key) controls the deadbolt — occupant can throw the deadbolt from inside without a key.<br><br>
+      Common at building and suite entries. Provides both latch and deadbolt security from outside; occupant controls deadbolt from inside.
+    </div>
+  </div>
+  <div class="cell-visual">
+    <div class="door-diag">
+      <div class="diag-out">
+        <span class="diag-side-label">Outside</span>
+        <span class="dp dp-key">Key</span>
+      </div>
+      <div class="diag-door"></div>
+      <div class="diag-in">
+        <span class="diag-side-label">Inside</span>
+        <span class="dp dp-free">Free</span>
+        <span class="dp dp-btn" style="font-size:0.47rem">Thumbturn</span>
+      </div>
+    </div>
+    <div class="diag-caption">Key outside · free + thumbturn inside<br>latch &amp; deadbolt</div>
+  </div>
+  <div class="cell-suit">
+    <div>
+      <div class="suit-label">Typical Applications</div>
+      <div class="suit-items">
+        <span class="suit-item">Building main and secondary entries</span>
+        <span class="suit-item">Suite and tenant entry doors</span>
+        <span class="suit-item">Exterior vestibule doors</span>
+        <span class="suit-item">Stairwell re-entry from secured floors</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRIVACY -->
+<div class="fn-row">
+  <div class="cell-code">
+    <div class="fn-abbr">Privacy</div>
+    <div class="fn-codes">
+      <span class="fn-code-pill">A156.13 F08</span>
+      <span class="fn-code-pill">A156.2 Privacy</span>
+    </div>
+  </div>
+  <div class="cell-desc">
+    <div class="fn-name">Privacy</div>
+    <div class="fn-tags">
+      <span class="tag">No Key</span>
+      <span class="tag">Pushbutton Inside</span>
+      <span class="tag">Coin Release</span>
+    </div>
+    <div class="fn-spec">
+      <strong>Outside:</strong> No key cylinder. Emergency release only — coin, pin, or small tool in outside escutcheon slot retracts the latch for emergency entry.<br>
+      <strong>Inside:</strong> Pushbutton or thumbturn deadlocks outside lever. Inside lever always free for egress.<br><br>
+      Designed for spaces where privacy is needed but key access is not appropriate. Emergency release prevents occupant lockout.
+    </div>
+  </div>
+  <div class="cell-visual">
+    <div class="door-diag">
+      <div class="diag-out">
+        <span class="diag-side-label">Outside</span>
+        <span class="dp dp-coin">Coin<br>Release</span>
+      </div>
+      <div class="diag-door"></div>
+      <div class="diag-in">
+        <span class="diag-side-label">Inside</span>
+        <span class="dp dp-btn">Button</span>
+      </div>
+    </div>
+    <div class="diag-caption">Inside button locks · no key<br>coin/pin emergency release</div>
+  </div>
+  <div class="cell-suit">
+    <div>
+      <div class="suit-label">Typical Applications</div>
+      <div class="suit-items">
+        <span class="suit-item">Single-occupancy restrooms</span>
+        <span class="suit-item">Changing rooms and nursing rooms</span>
+        <span class="suit-item">Interview and counseling rooms</span>
+        <span class="suit-item">Accessible single-user toilet rooms</span>
+      </div>
+    </div>
+    <div class="suit-note">Not for multi-occupancy restrooms — those use passage sets with a separate occupied indicator sign or light.</div>
+  </div>
+</div>
+
+<!-- COMMUNICATING -->
+<div class="fn-row">
+  <div class="cell-code">
+    <div class="fn-abbr">Commu&shy;nicating</div>
+    <div class="fn-codes">
+      <span class="fn-code-pill">A156.13 F14</span>
+    </div>
+  </div>
+  <div class="cell-desc">
+    <div class="fn-name">Communicating</div>
+    <div class="fn-tags">
+      <span class="tag">Key Both Sides</span>
+      <span class="tag">Two Cylinders</span>
+      <span class="tag">Independent</span>
+    </div>
+    <div class="fn-spec">
+      <strong>Both sides:</strong> Independent key cylinder on each side. Each side can be locked and unlocked independently. Both levers are always free for egress regardless of lock state.<br><br>
+      The two cylinders can be keyed identically or differently depending on the access program. Either occupant can control access from their side without affecting the other.
+    </div>
+  </div>
+  <div class="cell-visual">
+    <div class="door-diag">
+      <div class="diag-out">
+        <span class="diag-side-label">Side A</span>
+        <span class="dp dp-key">Key</span>
+      </div>
+      <div class="diag-door"></div>
+      <div class="diag-in">
+        <span class="diag-side-label">Side B</span>
+        <span class="dp dp-key">Key</span>
+      </div>
+    </div>
+    <div class="diag-caption">Key on both sides<br>independent cylinders</div>
+  </div>
+  <div class="cell-suit">
+    <div>
+      <div class="suit-label">Typical Applications</div>
+      <div class="suit-items">
+        <span class="suit-item">Connecting offices or conference rooms</span>
+        <span class="suit-item">Hotel connecting / adjoining guestrooms</span>
+        <span class="suit-item">Accessible suites and companion rooms</span>
+        <span class="suit-item">Shared space between two tenants</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DUMMY -->
+<div class="fn-row">
+  <div class="cell-code">
+    <div class="fn-abbr">Dummy</div>
+    <div class="fn-codes">
+      <span class="fn-code-pill">Trim Only</span>
+    </div>
+  </div>
+  <div class="cell-desc">
+    <div class="fn-name">Dummy Trim</div>
+    <div class="fn-tags">
+      <span class="tag">No Latch</span>
+      <span class="tag">No Function</span>
+      <span class="tag">Decorative</span>
+    </div>
+    <div class="fn-spec">
+      <strong>Both sides:</strong> Surface-mounted lever or knob trim only. No latch mechanism, no through-spindle, no lock. Lever is fixed or spring-loaded and operates nothing.<br><br>
+      Used where a lever is needed for appearance or to pull a door, but a latching mechanism is not required. Typically paired with magnetic catches or flush bolts on the inactive leaf of a pair.
+    </div>
+  </div>
+  <div class="cell-visual">
+    <div class="door-diag">
+      <div class="diag-out">
+        <span class="diag-side-label">Outside</span>
+        <span class="dp dp-none">Trim</span>
+      </div>
+      <div class="diag-door"></div>
+      <div class="diag-in">
+        <span class="diag-side-label">Inside</span>
+        <span class="dp dp-none">Trim</span>
+      </div>
+    </div>
+    <div class="diag-caption">Trim only · no latch<br>no operating function</div>
+  </div>
+  <div class="cell-suit">
+    <div>
+      <div class="suit-label">Typical Applications</div>
+      <div class="suit-items">
+        <span class="suit-item">Inactive leaf of a pair (with flush bolts)</span>
+        <span class="suit-item">Closet pull-only doors in suites</span>
+        <span class="suit-item">Decorative accent and pass doors</span>
+        <span class="suit-item">Coordinate trim finish with active leaf</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- #functions -->
+
+<!-- ─── CORE TYPES ──────────────────────────────────────── -->
+<div class="section-head">
+  <div class="section-eyebrow">ANSI/BHMA A156.30 · Cylinder Reference</div>
+  <h2>Core &amp; <em>Cylinder Types</em></h2>
+</div>
+
+<div class="cores-grid">
+
+  <div class="core-card">
+    <div class="core-icon"></div>
+    <div class="core-name">Standard Cylinder</div>
+    <div class="core-detail">
+      <strong>Removal:</strong> Requires disassembly of lockset or cylinder pull tools. Not field-interchangeable without hardware.<br><br>
+      <strong>Rekeying:</strong> By locksmith on-site or cylinder sent out. Pins replaced in place.<br><br>
+      Most common for small-scale projects and budget work. Lower upfront cost; higher long-term cost on large keying systems.
+    </div>
+    <div class="core-badges">
+      <span class="tag">Permanent</span>
+      <span class="tag">Low Cost</span>
+    </div>
+  </div>
+
+  <div class="core-card">
+    <div class="core-icon ic"></div>
+    <div class="core-name">SFIC — Small Format IC</div>
+    <div class="core-detail">
+      <strong>Removal:</strong> Control key removes and inserts core in seconds, without tools or disassembly.<br><br>
+      <strong>Standard:</strong> ANSI/BHMA A156.30 — cross-compatible housing across manufacturers (BEST, Corbin, Arrow, Yale, Medeco, etc.).<br><br>
+      Industry standard for large keying systems. Core changes can be delegated to trained facilities staff. 7-pin format.
+    </div>
+    <div class="core-badges">
+      <span class="tag accent">IC Standard</span>
+      <span class="tag">Cross-Brand</span>
+      <span class="tag">7-Pin</span>
+    </div>
+  </div>
+
+  <div class="core-card">
+    <div class="core-icon ic"></div>
+    <div class="core-name">LFIC — Large Format IC</div>
+    <div class="core-detail">
+      <strong>Removal:</strong> Control key interchangeable, no tools required. Larger housing than SFIC.<br><br>
+      <strong>Standard:</strong> Manufacturer-specific — Schlage FSIC, ASSA ABLOY, Sargent. Not cross-compatible with SFIC housing.<br><br>
+      Specify manufacturer at project outset — LFIC cores are not interchangeable between brands. Confirm with hardware distributor.
+    </div>
+    <div class="core-badges">
+      <span class="tag">Mfr-Specific</span>
+      <span class="tag">Large Format</span>
+    </div>
+  </div>
+
+  <div class="core-card">
+    <div class="core-icon temp"></div>
+    <div class="core-name">Construction Core</div>
+    <div class="core-detail">
+      <strong>Purpose:</strong> Temporary cores installed at hardware rough-in, keyed alike across all openings for contractor access during construction.<br><br>
+      <strong>Removal:</strong> Removed and replaced with owner's permanent cores at substantial completion, or upon owner's authorization.<br><br>
+      Never include in permanent keying schedule. Collect and destroy construction keys at turnover.
+    </div>
+    <div class="core-badges">
+      <span class="tag">Temporary</span>
+      <span class="tag">Keyed Alike</span>
+      <span class="tag new">Remove at SC</span>
+    </div>
+  </div>
+
+  <div class="core-card">
+    <div class="core-icon"></div>
+    <div class="core-name">Restricted Keyway</div>
+    <div class="core-detail">
+      <strong>Purpose:</strong> Proprietary or licensed keyway with controlled key duplication — keys cannot be copied at a standard hardware store.<br><br>
+      <strong>Formats:</strong> Available in standard (fixed) or IC format. Examples: Medeco, Mul-T-Lock, Schlage Everest, BEST Primus.<br><br>
+      Specify when key control is a project requirement — high-security facilities, government, data centers.
+    </div>
+    <div class="core-badges">
+      <span class="tag">High Security</span>
+      <span class="tag">Controlled Dup.</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ─── GRADES ──────────────────────────────────────────── -->
+<div class="grades-section">
+  <div class="section-eyebrow">ANSI/BHMA · Hardware Grades</div>
+  <h2 style="font-family:'DM Serif Display',serif;font-size:1.6rem;font-weight:400;line-height:1.2;">Grade <em style="font-style:italic;color:var(--ink-muted);">Comparison</em></h2>
+  <p class="grades-intro">ANSI/BHMA grades apply across cylindrical locks (A156.2), mortise locks (A156.13), exit devices (A156.3), and closers (A156.4). Always specify Grade 1 for commercial and institutional work. Grade designations are specific to each product standard — a Grade 1 closer is not the same test as a Grade 1 lockset.</p>
+  <div class="grades-grid">
+
+    <div class="grade-card">
+      <div class="grade-header">
+        <div class="grade-num">1</div>
+        <div class="grade-title">Heavy Commercial<br>Institutional</div>
+      </div>
+      <div class="grade-body">
+        <div class="grade-spec">
+          <strong>Cycles:</strong> 250,000 lever cycles minimum (A156.2).<br>
+          <strong>Tests:</strong> Cycle endurance, torque, strike, finish, closer force resistance.<br>
+          <strong>Use:</strong> All commercial, institutional, and exterior doors. Education, healthcare, government, high-traffic commercial. Default for all commercial projects.
+        </div>
+        <div class="grade-bar"><div class="grade-bar-fill" style="width:100%"></div></div>
+        <div class="grade-bar-label"><span>Required — all commercial work</span><span>Grade 1</span></div>
+      </div>
+    </div>
+
+    <div class="grade-card">
+      <div class="grade-header">
+        <div class="grade-num">2</div>
+        <div class="grade-title">Light Commercial<br>Multi-Family</div>
+      </div>
+      <div class="grade-body">
+        <div class="grade-spec">
+          <strong>Cycles:</strong> Reduced cycle and force test requirements vs Grade 1.<br>
+          <strong>Use:</strong> Light commercial, multi-family residential, low-traffic interior openings.<br>
+          <strong>Note:</strong> Rarely specified on commercial projects — most architects default to Grade 1 across the board.
+        </div>
+        <div class="grade-bar"><div class="grade-bar-fill" style="width:62%"></div></div>
+        <div class="grade-bar-label"><span>Light commercial / multi-family</span><span>Grade 2</span></div>
+      </div>
+    </div>
+
+    <div class="grade-card">
+      <div class="grade-header">
+        <div class="grade-num">3</div>
+        <div class="grade-title">Residential<br>Light Duty Only</div>
+      </div>
+      <div class="grade-body">
+        <div class="grade-spec">
+          <strong>Cycles:</strong> Minimum cycle count; reduced force and attack resistance requirements.<br>
+          <strong>Use:</strong> Single-family residential only.<br>
+          <strong>Note:</strong> Never specify Grade 3 on commercial, institutional, multi-family common areas, or any code-required opening.
+        </div>
+        <div class="grade-bar"><div class="grade-bar-fill" style="width:28%"></div></div>
+        <div class="grade-bar-label"><span>Single-family residential only</span><span>Grade 3</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="disclaimer">
+  <p><strong>Function codes and behaviors vary by manufacturer, hardware series, and platform (mortise vs. cylindrical).</strong> ANSI/BHMA A156.13 F-codes apply specifically to mortise locks; cylindrical (A156.2) functions use similar names but different designation systems. For exit device trim functions reference A156.3. Always verify function behavior against manufacturer product data and cut sheets before specifying. Consult a hardware consultant or distributor on projects with complex keying or access control requirements.</p>
+</div>
+
+<footer>
+  <p>ANSI/BHMA A156.2 / A156.13 / A156.30 &nbsp;|&nbsp; FOR REFERENCE ONLY &nbsp;|&nbsp; VERIFY WITH MANUFACTURER CUT SHEETS</p>
+  <div class="footer-logo"><a href="../index.html">ArchOS</a></div>
+</footer>
+
+</body>
+</html>

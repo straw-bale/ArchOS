@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ArchOS — Architectural Reference Library</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      /* ── Category sections ── */
+      .category {
+        border-bottom: 1px solid var(--rule);
+        opacity: 0;
+        transform: translateY(16px);
+        animation: fadeUp 0.45s forwards;
+      }
+      .category:nth-child(1) {
+        animation-delay: 0.05s;
+      }
+      .category:nth-child(2) {
+        animation-delay: 0.1s;
+      }
+      .category:nth-child(3) {
+        animation-delay: 0.15s;
+      }
+      .category:nth-child(4) {
+        animation-delay: 0.2s;
+      }
+
+      .category-header {
+        display: flex;
+        align-items: baseline;
+        gap: 1.5rem;
+        padding: 1.5rem 4rem 0.75rem;
+        border-bottom: 1px solid var(--rule);
+      }
+      .category-name {
+        font-family: "DM Mono", monospace;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: var(--ink-muted);
+      }
+      .category-count {
+        font-family: "DM Mono", monospace;
+        font-size: 0.58rem;
+        color: var(--rule);
+        letter-spacing: 0.08em;
+      }
+
+      /* ── Page entries ── */
+      .page-entry {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 2rem;
+        padding: 1.5rem 4rem;
+        border-bottom: 1px solid var(--rule);
+        text-decoration: none;
+        color: inherit;
+        transition: background 0.15s;
+      }
+      .page-entry:last-child {
+        border-bottom: none;
+      }
+      .page-entry:hover {
+        background: rgba(255, 255, 255, 0.55);
+      }
+      .page-entry:hover .entry-arrow {
+        color: var(--accent);
+        transform: translateX(4px);
+      }
+
+      .entry-left {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .entry-title {
+        font-family: "DM Serif Display", serif;
+        font-size: 1.15rem;
+        font-weight: 400;
+        line-height: 1.2;
+      }
+      .entry-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+      .entry-desc {
+        font-size: 0.8rem;
+        color: var(--ink-muted);
+        line-height: 1.5;
+        max-width: 560px;
+      }
+      .entry-tags {
+        display: flex;
+        gap: 0.35rem;
+        flex-wrap: wrap;
+      }
+
+      .entry-arrow {
+        font-family: "DM Mono", monospace;
+        font-size: 0.9rem;
+        color: var(--ink-muted);
+        transition:
+          color 0.15s,
+          transform 0.15s;
+        flex-shrink: 0;
+      }
+
+      /* ── Empty state placeholder ── */
+      .entry-placeholder {
+        padding: 1.5rem 4rem;
+        border-bottom: 1px solid var(--rule);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      .entry-placeholder:last-child {
+        border-bottom: none;
+      }
+      .placeholder-line {
+        height: 1px;
+        flex: 1;
+        background: repeating-linear-gradient(
+          90deg,
+          var(--rule) 0px,
+          var(--rule) 6px,
+          transparent 6px,
+          transparent 12px
+        );
+      }
+      .placeholder-label {
+        font-family: "DM Mono", monospace;
+        font-size: 0.58rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--rule);
+      }
+
+      @media (max-width: 960px) {
+        .category-header,
+        .page-entry,
+        .entry-placeholder {
+          padding: 1rem 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>
+        <div class="header-eyebrow">ArchOS · Reference Library</div>
+        <h1>Architectural Tools<br /><em>&amp; References</em></h1>
+      </div>
+      <div class="header-meta">
+        TYPE: REFERENCE LIBRARY<br />USE: PRACTICE + SPEC<br />AUDIENCE:
+        ARCHITECTS<br />FORMAT: HTML / WEB
+      </div>
+    </header>
+
+    <div class="intro">
+      <p>
+        A growing collection of reference pages and tools for day-to-day
+        architectural practice — hardware, materials, code, details, and more.
+        Each page is a standalone, printable reference. No login, no tracking,
+        no dependencies.
+      </p>
+      <div class="intro-stat">
+        <span class="num">2</span>
+        <span class="label">Pages<br />Published</span>
+      </div>
+    </div>
+
+    <!-- ── Hardware ─────────────────────────────── -->
+    <div class="category">
+      <div class="category-header">
+        <span class="category-name">Hardware</span>
+        <span class="category-count">2 pages</span>
+      </div>
+
+      <a class="page-entry" href="tools/hardware-finishes.html">
+        <div class="entry-left">
+          <div class="entry-title">Door Hardware Finishes</div>
+          <div class="entry-meta">
+            <div class="entry-tags">
+              <span class="tag accent">Published</span>
+              <span class="tag">A156.18</span>
+              <span class="tag">Finishes</span>
+              <span class="tag">Door Hardware</span>
+            </div>
+          </div>
+          <div class="entry-desc">
+            Common commercial hardware finishes — finish codes, process notes,
+            suitability by project type, and durability comparison. Covers all
+            standard Schlage finishes (605–630).
+          </div>
+        </div>
+        <span class="entry-arrow">→</span>
+      </a>
+
+      <a class="page-entry" href="tools/lock-functions.html">
+        <div class="entry-left">
+          <div class="entry-title">Door Lockset Functions &amp; Core Types</div>
+          <div class="entry-meta">
+            <div class="entry-tags">
+              <span class="tag accent">Published</span>
+              <span class="tag">A156.2</span>
+              <span class="tag">A156.13</span>
+              <span class="tag">Hardware Schedule</span>
+            </div>
+          </div>
+          <div class="entry-desc">
+            Lockset function reference for door hardware schedules — passage,
+            classroom, storeroom, office, entrance, privacy, communicating, and
+            dummy. Includes core types and ANSI grade comparison.
+          </div>
+        </div>
+        <span class="entry-arrow">→</span>
+      </a>
+    </div>
+
+    <!-- ── Materials ────────────────────────────── -->
+    <div class="category">
+      <div class="category-header">
+        <span class="category-name">Materials</span>
+        <span class="category-count">0 pages</span>
+      </div>
+      <div class="entry-placeholder">
+        <div class="placeholder-line"></div>
+        <span class="placeholder-label">Coming soon</span>
+        <div class="placeholder-line"></div>
+      </div>
+    </div>
+
+    <!-- ── Code Reference ───────────────────────── -->
+    <div class="category">
+      <div class="category-header">
+        <span class="category-name">Code Reference</span>
+        <span class="category-count">0 pages</span>
+      </div>
+      <div class="entry-placeholder">
+        <div class="placeholder-line"></div>
+        <span class="placeholder-label">Coming soon</span>
+        <div class="placeholder-line"></div>
+      </div>
+    </div>
+
+    <!-- ── Details ──────────────────────────────── -->
+    <div class="category">
+      <div class="category-header">
+        <span class="category-name">Details</span>
+        <span class="category-count">0 pages</span>
+      </div>
+      <div class="entry-placeholder">
+        <div class="placeholder-line"></div>
+        <span class="placeholder-label">Coming soon</span>
+        <div class="placeholder-line"></div>
+      </div>
+    </div>
+
+    <footer>
+      <p>ARCHOS · ARCHITECTURAL REFERENCE LIBRARY · FOR PRACTICE USE</p>
+      <div class="footer-logo">ArchOS</div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,157 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap');
+
+/* ─── Tokens ─────────────────────────────────────────────── */
+:root {
+  --bg:         #f4f1ec;
+  --ink:        #1a1714;
+  --ink-muted:  #6b6560;
+  --rule:       #d4cfc8;
+  --accent:     #c8440a;
+  --tag-bg:     #ede9e2;
+}
+
+/* ─── Reset ──────────────────────────────────────────────── */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ─── Base ───────────────────────────────────────────────── */
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+}
+
+/* ─── Header ─────────────────────────────────────────────── */
+header {
+  border-bottom: 1px solid var(--rule);
+  padding: 3rem 4rem 2.5rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 2rem;
+}
+.header-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.75rem;
+}
+header h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1.1;
+  font-weight: 400;
+}
+header h1 em { font-style: italic; color: var(--ink-muted); }
+.header-meta {
+  text-align: right;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--ink-muted);
+  line-height: 1.8;
+  letter-spacing: 0.05em;
+}
+
+/* ─── Intro band ─────────────────────────────────────────── */
+.intro {
+  padding: 2rem 4rem;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+}
+.intro p {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--ink-muted);
+  max-width: 640px;
+}
+.intro-stat {
+  flex-shrink: 0;
+  text-align: center;
+  border-left: 1px solid var(--rule);
+  padding-left: 3rem;
+}
+.intro-stat .num {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2.5rem;
+  color: var(--accent);
+  display: block;
+}
+.intro-stat .label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-muted);
+}
+
+/* ─── Tags ───────────────────────────────────────────────── */
+.tag {
+  background: var(--tag-bg);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.2rem 0.55rem;
+  border-radius: 2px;
+  color: var(--ink-muted);
+}
+.tag.accent { background: var(--accent); color: white; }
+.tag.new    { background: #2a6e3f;      color: white; }
+
+/* ─── Disclaimer ─────────────────────────────────────────── */
+.disclaimer {
+  padding: 1.25rem 4rem;
+  border-bottom: 1px solid var(--rule);
+}
+.disclaimer p {
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+  line-height: 1.6;
+}
+.disclaimer strong { color: var(--ink); }
+
+/* ─── Footer ─────────────────────────────────────────────── */
+footer {
+  padding: 2rem 4rem;
+  border-top: 2px solid var(--ink);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+footer p {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--ink-muted);
+  letter-spacing: 0.08em;
+}
+footer .footer-logo {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1rem;
+  color: var(--ink-muted);
+}
+footer a {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--ink-muted);
+  text-decoration: none;
+  letter-spacing: 0.08em;
+}
+footer a:hover { color: var(--accent); }
+
+/* ─── Animation ──────────────────────────────────────────── */
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Responsive ─────────────────────────────────────────── */
+@media (max-width: 960px) {
+  header,
+  .intro,
+  .disclaimer,
+  footer { padding: 1.5rem; }
+}
