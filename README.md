@@ -1,1 +1,1 @@
-Experiments for improving architectural practice.
+Experiments and digital tools for improving architectural practice.
