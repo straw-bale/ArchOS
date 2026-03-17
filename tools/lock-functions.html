@@ -328,6 +328,105 @@
     color: var(--ink-muted);
   }
 
+  /* ── Electrified hardware cards ── */
+  .elec-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-bottom: 1px solid var(--rule);
+  }
+  .elec-card {
+    padding: 1.75rem;
+    border-right: 1px solid var(--rule);
+    opacity: 0; transform: translateY(12px); animation: fadeUp 0.4s forwards;
+  }
+  .elec-card:last-child { border-right: none; }
+  .elec-card:nth-child(1) { animation-delay: 0.05s; }
+  .elec-card:nth-child(2) { animation-delay: 0.10s; }
+  .elec-card:nth-child(3) { animation-delay: 0.15s; }
+  .elec-card:nth-child(4) { animation-delay: 0.20s; }
+  .elec-icon {
+    width: 36px; height: 36px; border-radius: 4px;
+    border: 1.5px solid var(--rule); margin-bottom: 1rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .elec-icon.ei-strike { background: #fae8dc; border-color: #e8b898; }
+  .elec-icon.ei-strike::after { content: ''; width: 8px; height: 16px; background: var(--accent); border-radius: 1px; }
+  .elec-icon.ei-mag { background: #e4ecf4; border-color: #a8c0d8; }
+  .elec-icon.ei-mag::after { content: ''; width: 16px; height: 10px; border: 2.5px solid #3a5878; border-bottom: none; border-radius: 8px 8px 0 0; }
+  .elec-icon.ei-lockset { background: #ede6d0; border-color: #c8b890; }
+  .elec-icon.ei-lockset::after { content: ''; width: 12px; height: 12px; border-radius: 50%; border: 2.5px solid #6e5e3a; }
+  .elec-icon.ei-exit { background: #e0f0e8; border-color: #88c8a0; }
+  .elec-icon.ei-exit::after { content: ''; width: 0; height: 0; border-style: solid; border-width: 6px 0 6px 10px; border-color: transparent transparent transparent #2a6e3f; margin-left: 2px; }
+  .elec-type {
+    font-family: 'DM Mono', monospace; font-size: 0.55rem;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--accent); margin-bottom: 0.3rem;
+  }
+  .elec-name {
+    font-family: 'DM Serif Display', serif; font-size: 1rem;
+    font-weight: 400; line-height: 1.2; margin-bottom: 0.75rem;
+  }
+  .elec-detail { font-size: 0.75rem; color: var(--ink-muted); line-height: 1.65; margin-bottom: 0.75rem; }
+  .elec-detail strong { color: var(--ink); font-weight: 500; }
+  .elec-badges { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+  .tag-fs { background: #fae8dc; color: #9e3008; font-family: 'DM Mono', monospace; font-size: 0.55rem; padding: 0.12rem 0.45rem; border-radius: 2px; }
+  .tag-fo { background: #e0f0e8; color: #2a6e3f; font-family: 'DM Mono', monospace; font-size: 0.55rem; padding: 0.12rem 0.45rem; border-radius: 2px; }
+
+  /* ── Fail-safe vs fail-secure ── */
+  .fail-pair {
+    display: grid; grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid var(--rule);
+  }
+  .fail-card { padding: 2rem 2.5rem; border-right: 1px solid var(--rule); }
+  .fail-card:last-child { border-right: none; }
+  .fail-eyebrow {
+    font-family: 'DM Mono', monospace; font-size: 0.58rem;
+    text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.4rem;
+  }
+  .fail-eyebrow.fs { color: #9e3008; }
+  .fail-eyebrow.fo { color: #2a6e3f; }
+  .fail-title {
+    font-family: 'DM Serif Display', serif; font-size: 1.25rem;
+    font-weight: 400; line-height: 1.2; margin-bottom: 0.75rem;
+  }
+  .fail-desc { font-size: 0.78rem; color: var(--ink-muted); line-height: 1.65; }
+  .fail-desc strong { color: var(--ink); font-weight: 500; }
+
+  /* ── Compatibility table ── */
+  .compat-wrap { padding: 2rem 4rem 2.5rem; border-bottom: 1px solid var(--rule); }
+  .compat-sub {
+    font-family: 'DM Mono', monospace; font-size: 0.65rem;
+    text-transform: uppercase; letter-spacing: 0.14em; color: var(--accent); margin-bottom: 0.4rem;
+  }
+  .compat-intro { font-size: 0.8rem; color: var(--ink-muted); line-height: 1.6; margin-bottom: 1.5rem; max-width: 640px; }
+  .compat-table {
+    display: grid;
+    grid-template-columns: 150px repeat(3, 1fr);
+    border: 1px solid var(--rule); border-radius: 4px; overflow: hidden;
+  }
+  .compat-cell {
+    padding: 0.85rem 1rem;
+    border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+  }
+  .compat-table .compat-cell:nth-child(4n) { border-right: none; }
+  .compat-table .compat-cell:nth-last-child(-n+4) { border-bottom: none; }
+  .ch {
+    font-family: 'DM Mono', monospace; font-size: 0.58rem;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--ink-muted); background: var(--tag-bg);
+    display: flex; align-items: center;
+  }
+  .cf {
+    font-family: 'DM Mono', monospace; font-size: 0.62rem;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    background: var(--tag-bg); display: flex; align-items: center; color: var(--ink);
+  }
+  .cc { display: flex; flex-direction: column; gap: 0.25rem; }
+  .cc-ideal { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--accent); font-weight: 600; }
+  .cc-works { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: #2a6e3f; }
+  .cc-avoid { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--ink-muted); }
+  .cc-note { font-size: 0.65rem; color: var(--ink-muted); line-height: 1.4; }
+
   /* ── Responsive ── */
   @media (max-width: 960px) {
     .col-headers { display: none; }
@@ -338,6 +437,12 @@
     .core-card:nth-child(2n) { border-right: none; }
     .grades-grid { grid-template-columns: 1fr; }
     .section-head, .grades-section { padding: 1.5rem; }
+    .elec-grid { grid-template-columns: 1fr 1fr; }
+    .elec-card:nth-child(2n) { border-right: none; }
+    .fail-pair { grid-template-columns: 1fr; }
+    .fail-card { border-right: none; border-bottom: 1px solid var(--rule); }
+    .compat-wrap { padding: 1.5rem; }
+    .compat-table { grid-template-columns: 100px repeat(3, 1fr); }
   }
 </style>
 </head>
@@ -905,6 +1010,172 @@
         <div class="grade-bar-label"><span>Single-family residential only</span><span>Grade 3</span></div>
       </div>
     </div>
+
+  </div>
+</div>
+
+<!-- ─── ELECTRIFIED HARDWARE ───────────────────────────── -->
+<div class="section-head">
+  <div class="section-eyebrow">Access Control · Electrified Openings</div>
+  <h2>Electrified Hardware<br><em>&amp; Lockset Pairing</em></h2>
+</div>
+
+<div class="elec-grid">
+
+  <div class="elec-card">
+    <div class="elec-icon ei-strike"></div>
+    <div class="elec-type">Frame-Mounted</div>
+    <div class="elec-name">Electric Strike</div>
+    <div class="elec-detail">
+      Replaces the standard strike plate in the door frame. When a credential is accepted, the strike keeper pivots and releases — the door is pushed open <strong>without retracting the latch</strong>. The latch snaps back into the strike when the door closes.<br><br>
+      <strong>Best paired with:</strong> Storeroom (F04) — outside lever remains permanently rigid; the strike is the only controlled entry point. Mechanical key works as backup regardless of power state.<br><br>
+      <strong>Standard:</strong> ANSI A156.5
+    </div>
+    <div class="elec-badges">
+      <span class="tag-fs">Fail-Secure avail.</span>
+      <span class="tag-fo">Fail-Safe avail.</span>
+    </div>
+  </div>
+
+  <div class="elec-card">
+    <div class="elec-icon ei-mag"></div>
+    <div class="elec-type">Header-Mounted</div>
+    <div class="elec-name">Electromagnetic Lock</div>
+    <div class="elec-detail">
+      Surface-mounted electromagnet at the door header holds an armature plate on the door face. <strong>No interaction with the latch or lockset</strong> — holding force only (600–1,200 lb typical). Any lockset function can be used; passage trim is most common.<br><br>
+      <strong>IBC 1010.1.9.8 requires:</strong> Motion sensor above door (passive infrared) that releases on approach, OR a pushbutton with ≤15-second delay + signage. Fire alarm must trigger release.<br><br>
+      <strong>Standard:</strong> ANSI A156.23
+    </div>
+    <div class="elec-badges">
+      <span class="tag-fo">Always Fail-Safe</span>
+    </div>
+  </div>
+
+  <div class="elec-card">
+    <div class="elec-icon ei-lockset"></div>
+    <div class="elec-type">Door-Mounted</div>
+    <div class="elec-name">Electrified Lockset</div>
+    <div class="elec-detail">
+      Solenoid or motor within the lockset chassis retracts the latchbolt upon credential presentation. <strong>No frame modification required.</strong> Available primarily on mortise platform; electrified storeroom (F04) is most common spec.<br><br>
+      Request-to-Exit (RTE/REX) sensor is typically built into the inside lever — occupant presence retracts latch automatically for egress without pressing a button.<br><br>
+      Cleaner installation and higher security than electric strike, at higher cost.
+    </div>
+    <div class="elec-badges">
+      <span class="tag-fs">Fail-Secure avail.</span>
+      <span class="tag-fo">Fail-Safe avail.</span>
+    </div>
+  </div>
+
+  <div class="elec-card">
+    <div class="elec-icon ei-exit"></div>
+    <div class="elec-type">Exit Device</div>
+    <div class="elec-name">Electric Latch Retraction</div>
+    <div class="elec-detail">
+      Motor retracts the exit device latch/bolt upon credential presentation. <strong>Used with panic/exit devices only</strong> — not a lockset. Specify separately in the hardware schedule as a feature of the exit device.<br><br>
+      Common at building main entries where a card reader on the outside triggers latch retraction; occupants exit freely via panic bar. Coordinate with the access control system integrator.<br><br>
+      <strong>Manufacturers:</strong> Von Duprin, Sargent, Corbin, Precision
+    </div>
+    <div class="elec-badges">
+      <span class="tag-fs">Fail-Secure avail.</span>
+      <span class="tag-fo">Fail-Safe avail.</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- Fail-safe / fail-secure -->
+<div class="fail-pair">
+  <div class="fail-card">
+    <div class="fail-eyebrow fs">Fail-Secure · Fail-Locked</div>
+    <div class="fail-title">Power Loss = Locked</div>
+    <div class="fail-desc">
+      When power is interrupted, the device <strong>remains locked</strong>. Entry requires a mechanical key or restoration of power.<br><br>
+      <strong>Use for:</strong> Interior security doors, server/IDF rooms, drug storage, storerooms, any opening where unauthorized access during a power failure is the primary risk.<br><br>
+      <strong>Note:</strong> Inside egress must never be impeded — fail-secure applies to the entry control only. Inside lever or panic bar must always allow free egress.
+    </div>
+  </div>
+  <div class="fail-card">
+    <div class="fail-eyebrow fo">Fail-Safe · Fail-Open</div>
+    <div class="fail-title">Power Loss = Unlocked</div>
+    <div class="fail-desc">
+      When power is interrupted, the device <strong>releases and unlocks</strong>. The door operates as an uncontrolled opening until power is restored.<br><br>
+      <strong>Use for:</strong> Egress paths required by life safety code, exterior entries on egress routes, any opening the AHJ requires to fail open. Maglocks are inherently fail-safe and cannot be configured otherwise.<br><br>
+      <strong>Fire alarm:</strong> NFPA 101 requires electrified openings on egress paths to release upon fire alarm signal, regardless of fail mode setting.
+    </div>
+  </div>
+</div>
+
+<!-- Pairing guide / compatibility table -->
+<div class="compat-wrap">
+  <div class="compat-sub">Pairing Guide</div>
+  <p class="compat-intro">Which lockset function to specify depends on the electrified device. The table below shows how each combination behaves. <strong>Storeroom + electric strike</strong> is the most common and most secure combination for card-access interior doors.</p>
+  <div class="compat-table">
+
+    <!-- Header row -->
+    <div class="compat-cell ch"></div>
+    <div class="compat-cell ch">Electric Strike</div>
+    <div class="compat-cell ch">Maglock</div>
+    <div class="compat-cell ch">Electrified Lockset</div>
+
+    <!-- Passage -->
+    <div class="compat-cell cf">Passage</div>
+    <div class="compat-cell"><div class="cc">
+      <span class="cc-works">Works</span>
+      <span class="cc-note">Strike releases keeper. Outside lever can still retract latch mechanically — no real security benefit. Use only where access control is the sole security layer (e.g. card-in, free-out).</span>
+    </div></div>
+    <div class="compat-cell"><div class="cc">
+      <span class="cc-works">Works</span>
+      <span class="cc-note">Most common maglock pairing. Passage trim on door; mag provides holding force. Credential + RTE release the mag.</span>
+    </div></div>
+    <div class="compat-cell"><div class="cc">
+      <span class="cc-avoid">Redundant</span>
+      <span class="cc-note">Electrifying a passage lockset provides no security — latch can always be mechanically retracted. Rarely specified.</span>
+    </div></div>
+
+    <!-- Classroom -->
+    <div class="compat-cell cf">Classroom</div>
+    <div class="compat-cell"><div class="cc">
+      <span class="cc-works">Works</span>
+      <span class="cc-note">Outside lever is locked; strike provides credential-based entry. Outside lever cannot retract latch — more secure than passage. Key still works as backup.</span>
+    </div></div>
+    <div class="compat-cell"><div class="cc">
+      <span class="cc-works">Works</span>
+      <span class="cc-note">Mag holds door; credential + RTE releases. Lockset function doesn't interact with the mag.</span>
+    </div></div>
+    <div class="compat-cell"><div class="cc">
+      <span class="cc-works">Works</span>
+      <span class="cc-note">Electrified classroom available on mortise; outside locked by default, credential retracts latch electrically.</span>
+    </div></div>
+
+    <!-- Storeroom -->
+    <div class="compat-cell cf">Storeroom</div>
+    <div class="compat-cell"><div class="cc">
+      <span class="cc-ideal">★ Ideal</span>
+      <span class="cc-note">The standard combination for card-access interior doors. Lever is always rigid outside; strike is the sole entry control. Mechanical key as backup. Inside lever always free for egress.</span>
+    </div></div>
+    <div class="compat-cell"><div class="cc">
+      <span class="cc-works">Works</span>
+      <span class="cc-note">Valid combination. Mag provides additional holding security. Storeroom function remains active as mechanical backup if mag loses power.</span>
+    </div></div>
+    <div class="compat-cell"><div class="cc">
+      <span class="cc-ideal">★ Ideal</span>
+      <span class="cc-note">Electrified storeroom mortise is the premium access control lockset. Credential retracts latch; outside lever remains rigid. Clean, high-security solution.</span>
+    </div></div>
+
+    <!-- Entrance -->
+    <div class="compat-cell cf">Entrance</div>
+    <div class="compat-cell"><div class="cc">
+      <span class="cc-avoid">Avoid</span>
+      <span class="cc-note">Electric strike releases the latch keeper but does not retract the deadbolt. Occupant must also turn thumbturn or key to fully secure. Use an electrified mortise with deadbolt retraction instead.</span>
+    </div></div>
+    <div class="compat-cell"><div class="cc">
+      <span class="cc-works">Works</span>
+      <span class="cc-note">Mag holds door regardless of deadbolt state. Suitable for exterior vestibule doors where mechanical key backup is also provided.</span>
+    </div></div>
+    <div class="compat-cell"><div class="cc">
+      <span class="cc-works">Works</span>
+      <span class="cc-note">Electrified entrance mortise retracts both latch and deadbolt simultaneously on credential. Specify electrical option at time of order.</span>
+    </div></div>
 
   </div>
 </div>
