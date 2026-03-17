@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interior Paint Systems — ArchOS</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+  /* ── Column grid ── */
+  .col-headers {
+    display: grid;
+    grid-template-columns: 100px 1fr 160px 1fr;
+    padding: 1rem 4rem;
+    border-bottom: 2px solid var(--ink);
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .col-headers span {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-muted);
+    font-weight: 500;
+  }
+
+  /* ── Rows ── */
+  .paint-row {
+    display: grid;
+    grid-template-columns: 100px 1fr 160px 1fr;
+    border-bottom: 1px solid var(--rule);
+    min-height: 200px;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.45s forwards;
+  }
+  .paint-row:nth-child(1) { animation-delay: 0.05s; }
+  .paint-row:nth-child(2) { animation-delay: 0.08s; }
+  .paint-row:nth-child(3) { animation-delay: 0.11s; }
+  .paint-row:nth-child(4) { animation-delay: 0.14s; }
+  .paint-row:nth-child(5) { animation-delay: 0.17s; }
+  .paint-row:hover { background: rgba(255,255,255,0.45); }
+
+  /* ── Type cell ── */
+  .cell-type {
+    border-right: 1px solid var(--rule);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem 0.75rem;
+    gap: 0.5rem;
+    text-align: center;
+  }
+  .sheen-abbr {
+    font-family: 'DM Serif Display', serif;
+    font-size: 0.85rem;
+    color: var(--accent);
+    line-height: 1.2;
+  }
+  .sheen-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+    background: var(--tag-bg);
+    padding: 0.12rem 0.4rem;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+
+  /* ── Description cell ── */
+  .cell-desc {
+    border-right: 1px solid var(--rule);
+    padding: 1.75rem 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.85rem;
+  }
+  .sheen-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1.25;
+  }
+  .sheen-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+  .sheen-spec { font-size: 0.8rem; color: var(--ink-muted); line-height: 1.65; }
+  .sheen-spec strong { color: var(--ink); font-weight: 500; }
+
+  /* ── Visual cell ── */
+  .cell-visual {
+    border-right: 1px solid var(--rule);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* ── Manufacturer / product links ── */
+  .mfr-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    margin-bottom: 0.3rem;
+  }
+  .mfr-links { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+  .mfr-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    color: var(--accent);
+    text-decoration: none;
+    background: var(--tag-bg);
+    padding: 0.15rem 0.5rem;
+    border-radius: 2px;
+    border: 1px solid var(--rule);
+    transition: background 0.15s, color 0.15s;
+  }
+  .mfr-link:hover { background: var(--accent); color: white; }
+
+  /* Cross-section */
+  .paint-diag {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px solid var(--rule);
+  }
+  .pd-layer {
+    display: flex;
+    align-items: center;
+    padding: 4px 8px;
+    gap: 6px;
+    min-height: 18px;
+  }
+  .pd-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.48rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    line-height: 1.3;
+    flex: 1;
+  }
+  .pd-sub     { background: #9ea4a8; color: #e8eaec; }
+  .pd-primer  { background: #d4ccbc; color: #5c5448; }
+  .pd-finish  { background: #c0ae8c; color: #3a3028; }
+  .pd-finish2 { background: #a89870; color: #2a2018; }
+
+  .diag-caption {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  /* ── Applications cell ── */
+  .cell-suit {
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1.1rem;
+  }
+  .suit-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    margin-bottom: 0.2rem;
+  }
+  .suit-items { display: flex; flex-direction: column; gap: 0.35rem; }
+  .suit-item {
+    font-size: 0.78rem;
+    color: var(--ink);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    line-height: 1.35;
+  }
+  .suit-item::before {
+    content: '';
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+    margin-top: 0.35rem;
+  }
+  .suit-item.avoid::before { background: var(--ink-muted); }
+  .suit-note {
+    font-size: 0.72rem;
+    color: var(--ink-muted);
+    line-height: 1.55;
+    font-style: italic;
+  }
+
+  /* ── Section break ── */
+  .section-head {
+    border-top: 2px solid var(--ink);
+    padding: 2rem 4rem 0;
+  }
+  .section-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    margin-bottom: 0.4rem;
+  }
+  .section-head h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    line-height: 1.2;
+    padding-bottom: 1.5rem;
+  }
+  .section-head h2 em { font-style: italic; color: var(--ink-muted); }
+
+  /* ── Substrate system cards ── */
+  .sys-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-bottom: 1px solid var(--rule);
+  }
+  .sys-card {
+    padding: 1.75rem 2rem;
+    border-right: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    opacity: 0;
+    transform: translateY(12px);
+    animation: fadeUp 0.4s forwards;
+  }
+  .sys-card:nth-child(3n)  { border-right: none; }
+  .sys-card:nth-child(4),
+  .sys-card:nth-child(5),
+  .sys-card:nth-child(6)   { border-bottom: none; }
+  /* glossary grid overrides last-row border via inline style */
+  .sys-card:nth-child(1) { animation-delay: 0.05s; }
+  .sys-card:nth-child(2) { animation-delay: 0.10s; }
+  .sys-card:nth-child(3) { animation-delay: 0.15s; }
+  .sys-card:nth-child(4) { animation-delay: 0.20s; }
+  .sys-card:nth-child(5) { animation-delay: 0.25s; }
+  .sys-card:nth-child(6) { animation-delay: 0.30s; }
+
+  .sys-substrate {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    margin-bottom: 0.35rem;
+  }
+  .sys-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    font-weight: 400;
+    line-height: 1.25;
+    margin-bottom: 1.1rem;
+  }
+  .sys-steps { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.85rem; }
+  .sys-step {
+    display: flex;
+    gap: 0.6rem;
+    font-size: 0.78rem;
+    line-height: 1.4;
+    align-items: flex-start;
+  }
+  .step-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--accent);
+    background: var(--tag-bg);
+    padding: 0.1rem 0.35rem;
+    border-radius: 2px;
+    flex-shrink: 0;
+    margin-top: 0.18rem;
+  }
+  .sys-note {
+    font-size: 0.72rem;
+    color: var(--ink-muted);
+    line-height: 1.55;
+    font-style: italic;
+    border-top: 1px dashed var(--rule);
+    padding-top: 0.75rem;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 960px) {
+    .col-headers { display: none; }
+    .paint-row { grid-template-columns: 1fr; border: 1px solid var(--rule); margin: 0.75rem; border-radius: 4px; min-height: unset; }
+    .cell-type { flex-direction: row; justify-content: flex-start; padding: 1rem 1.5rem; border-right: none; border-bottom: 1px solid var(--rule); gap: 0.75rem; }
+    .cell-desc, .cell-visual, .cell-suit { border-right: none; border-bottom: 1px solid var(--rule); }
+    .sys-grid { grid-template-columns: 1fr; }
+    .sys-card { border-right: none; }
+    .section-head { padding: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-nav"><a href="../index.html">ArchOS</a></nav>
+
+<header>
+  <div>
+    <div class="header-eyebrow">Finishes · Interior Painting</div>
+    <h1>Interior Paint Systems<br><em>Sheen Selection &amp; Surface Prep</em></h1>
+  </div>
+  <div class="header-meta">
+    STANDARD: MPI · PDCA<br>USE: COMMERCIAL + RESIDENTIAL<br>SCOPE: INTERIOR SURFACES<br>SHEEN SCALE: MPI G1–G7
+  </div>
+</header>
+
+<div class="intro">
+  <p>Sheen selection and surface preparation reference for interior painting specifications. MPI gloss designations (G1–G7) define sheen levels used in commercial specs. For project specifications, verify paint product MPI catalog numbers, dry film thickness requirements, and local VOC compliance before specifying.</p>
+  <div class="intro-stat">
+    <span class="num">5</span>
+    <span class="label">Sheen<br>Levels</span>
+  </div>
+</div>
+
+<div class="col-headers">
+  <span>MPI Level</span>
+  <span>Properties</span>
+  <span>Sheen / Section</span>
+  <span>Applications</span>
+</div>
+
+<div id="paint-rows">
+
+<!-- FLAT -->
+<div class="paint-row">
+  <div class="cell-type">
+    <div class="sheen-abbr">Flat</div>
+    <div class="sheen-pill">MPI G1</div>
+    <div class="sheen-pill">&lt;2% @ 60°</div>
+    <div class="sheen-pill">MPI #10 / #50</div>
+  </div>
+  <div class="cell-desc">
+    <div class="sheen-name">Flat</div>
+    <div class="sheen-tags">
+      <span class="tag">Maximum Hide</span>
+      <span class="tag">Ceilings</span>
+      <span class="tag">Low-Traffic</span>
+    </div>
+    <div class="sheen-spec">
+      <strong>Sheen at 60°:</strong> &lt;2% — fully diffuse, no visible reflectance<br>
+      <strong>Washability:</strong> Poor — not intended for scrubbing; washable flat formulas (MPI G2 velvet) available at modest sheen increase<br>
+      <strong>Hide:</strong> Maximum — best choice for concealing surface texture, drywall bead, tape joints, and minor substrate imperfections<br>
+      <strong>Touch-up:</strong> Excellent — spot repairs blend invisibly, making it the most forgiving sheen for ongoing maintenance<br>
+      <strong>MPI refs:</strong> #10 (Alkyd Flat, Int.), #50 (Latex Flat, Int.) — verify via MPI APL
+    </div>
+  </div>
+  <div class="cell-visual">
+    <div class="paint-diag">
+      <div class="pd-layer pd-finish2"><span class="pd-label">Finish coat 2</span></div>
+      <div class="pd-layer pd-finish"><span class="pd-label">Finish coat 1</span></div>
+      <div class="pd-layer pd-primer"><span class="pd-label">Primer / sealer</span></div>
+      <div class="pd-layer pd-sub"><span class="pd-label">Substrate</span></div>
+    </div>
+    <div class="diag-caption">Flat — fully diffuse surface</div>
+  </div>
+  <div class="cell-suit">
+    <div>
+      <div class="suit-label">Typical Use</div>
+      <div class="suit-items">
+        <div class="suit-item">Ceilings — standard spec on nearly all projects</div>
+        <div class="suit-item">Low-traffic walls: conference rooms, auditoriums, executive offices</div>
+        <div class="suit-item">Residential living rooms, bedrooms, dining rooms</div>
+        <div class="suit-item">Any surface where texture concealment is the priority</div>
+      </div>
+    </div>
+    <div>
+      <div class="suit-label">Avoid</div>
+      <div class="suit-items">
+        <div class="suit-item avoid">Kitchens, bathrooms, or any area subject to moisture or splatter</div>
+        <div class="suit-item avoid">High-traffic corridors requiring routine cleaning</div>
+      </div>
+    </div>
+    <div>
+      <div class="mfr-label">Common Products</div>
+      <div class="mfr-links">
+        <a class="mfr-link" href="https://www.sherwin-williams.com" target="_blank" rel="noopener">SW ProMar 200 Flat</a>
+        <a class="mfr-link" href="https://www.ppgpaints.com" target="_blank" rel="noopener">PPG SPEEDHIDE Flat</a>
+        <a class="mfr-link" href="https://www.benjaminmoore.com" target="_blank" rel="noopener">BM Ultra Spec 500 Flat</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EGGSHELL -->
+<div class="paint-row">
+  <div class="cell-type">
+    <div class="sheen-abbr">Egg</div>
+    <div class="sheen-pill">MPI G3</div>
+    <div class="sheen-pill">10–25% @ 60°</div>
+    <div class="sheen-pill">MPI #52</div>
+  </div>
+  <div class="cell-desc">
+    <div class="sheen-name">Eggshell</div>
+    <div class="sheen-tags">
+      <span class="tag accent">Default Wall Spec</span>
+      <span class="tag">Wipeable</span>
+      <span class="tag">General Interior</span>
+    </div>
+    <div class="sheen-spec">
+      <strong>Sheen at 60°:</strong> 10–25% — soft, low-luster appearance<br>
+      <strong>Washability:</strong> Good — can be wiped and spot-cleaned with mild detergent; not suitable for heavy scrubbing<br>
+      <strong>Hide:</strong> Good — slight sheen begins to reveal surface irregularities on large flat planes<br>
+      <strong>Touch-up:</strong> Good — minor sheen variation is acceptable; use same batch and applicator for best results<br>
+      <strong>MPI refs:</strong> #52 (Latex Eggshell, Int.) — verify via MPI APL
+    </div>
+  </div>
+  <div class="cell-visual">
+    <div class="paint-diag">
+      <div class="pd-layer pd-finish2"><span class="pd-label">Finish coat 2</span></div>
+      <div class="pd-layer pd-finish"><span class="pd-label">Finish coat 1</span></div>
+      <div class="pd-layer pd-primer"><span class="pd-label">Primer / sealer</span></div>
+      <div class="pd-layer pd-sub"><span class="pd-label">Substrate</span></div>
+    </div>
+    <div class="diag-caption">Eggshell — soft diffuse sheen</div>
+  </div>
+  <div class="cell-suit">
+    <div>
+      <div class="suit-label">Typical Use</div>
+      <div class="suit-items">
+        <div class="suit-item">Default commercial interior wall — offices, classrooms, corridors</div>
+        <div class="suit-item">Healthcare patient rooms, waiting areas, and public corridors</div>
+        <div class="suit-item">Residential living rooms, dining rooms, hallways</div>
+      </div>
+    </div>
+    <div class="suit-note">The most commonly specified interior wall finish for commercial projects. Good balance of cleanability and visual softness — use as the baseline unless conditions call for higher or lower sheen.</div>
+    <div>
+      <div class="mfr-label">Common Products</div>
+      <div class="mfr-links">
+        <a class="mfr-link" href="https://www.sherwin-williams.com" target="_blank" rel="noopener">SW ProMar 200 Eggshell</a>
+        <a class="mfr-link" href="https://www.ppgpaints.com" target="_blank" rel="noopener">PPG SPEEDHIDE Eggshell</a>
+        <a class="mfr-link" href="https://www.benjaminmoore.com" target="_blank" rel="noopener">BM Ultra Spec 500 Eggshell</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SATIN -->
+<div class="paint-row">
+  <div class="cell-type">
+    <div class="sheen-abbr">Satin</div>
+    <div class="sheen-pill">MPI G5</div>
+    <div class="sheen-pill">35–50% @ 60°</div>
+    <div class="sheen-pill">MPI #43 / #54</div>
+  </div>
+  <div class="cell-desc">
+    <div class="sheen-name">Satin</div>
+    <div class="sheen-tags">
+      <span class="tag">Scrubbable</span>
+      <span class="tag">High-Traffic</span>
+      <span class="tag">Damp Areas</span>
+    </div>
+    <div class="sheen-spec">
+      <strong>Sheen at 60°:</strong> 35–50% — noticeable sheen under ambient light<br>
+      <strong>Washability:</strong> Very good — scrubbable with mild detergent; resists light moisture<br>
+      <strong>Hide:</strong> Moderate — sheen begins to amplify surface texture, imperfections, and roller marks on large planes<br>
+      <strong>Touch-up:</strong> Fair — sheen variation is more visible; always source from the same batch for repairs<br>
+      <strong>MPI refs:</strong> #43 (Latex Satin, Int.), #54 (Latex Semi-Gloss/Satin, Int.) — verify via MPI APL
+    </div>
+  </div>
+  <div class="cell-visual">
+    <div class="paint-diag">
+      <div class="pd-layer pd-finish2"><span class="pd-label">Finish coat 2</span></div>
+      <div class="pd-layer pd-finish"><span class="pd-label">Finish coat 1</span></div>
+      <div class="pd-layer pd-primer"><span class="pd-label">Primer / sealer</span></div>
+      <div class="pd-layer pd-sub"><span class="pd-label">Substrate</span></div>
+    </div>
+    <div class="diag-caption">Satin — soft specular highlight</div>
+  </div>
+  <div class="cell-suit">
+    <div>
+      <div class="suit-label">Typical Use</div>
+      <div class="suit-items">
+        <div class="suit-item">High-traffic corridors, lobbies, and stairwells</div>
+        <div class="suit-item">Kitchens, break rooms, areas prone to splatter</div>
+        <div class="suit-item">Children's spaces, gyms, locker rooms</div>
+        <div class="suit-item">Some trim applications in residential settings</div>
+      </div>
+    </div>
+    <div>
+      <div class="suit-label">Avoid</div>
+      <div class="suit-items">
+        <div class="suit-item avoid">Uneven or poorly-prepped surfaces — sheen amplifies all irregularities</div>
+        <div class="suit-item avoid">Ceilings</div>
+      </div>
+    </div>
+    <div>
+      <div class="mfr-label">Common Products</div>
+      <div class="mfr-links">
+        <a class="mfr-link" href="https://www.sherwin-williams.com" target="_blank" rel="noopener">SW ProMar 200 Satin</a>
+        <a class="mfr-link" href="https://www.ppgpaints.com" target="_blank" rel="noopener">PPG SPEEDHIDE Satin</a>
+        <a class="mfr-link" href="https://www.benjaminmoore.com" target="_blank" rel="noopener">BM Ultra Spec 500 Satin</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SEMI-GLOSS -->
+<div class="paint-row">
+  <div class="cell-type">
+    <div class="sheen-abbr">S/G</div>
+    <div class="sheen-pill">MPI G6</div>
+    <div class="sheen-pill">50–70% @ 60°</div>
+    <div class="sheen-pill">MPI #47 / #48</div>
+  </div>
+  <div class="cell-desc">
+    <div class="sheen-name">Semi-Gloss</div>
+    <div class="sheen-tags">
+      <span class="tag accent">Standard Trim</span>
+      <span class="tag accent">Metal Doors &amp; Frames</span>
+      <span class="tag">Highly Scrubbable</span>
+      <span class="tag">Moisture-Resistant</span>
+    </div>
+    <div class="sheen-spec">
+      <strong>Sheen at 60°:</strong> 50–70% — strong reflectance, clearly visible sheen<br>
+      <strong>Washability:</strong> Excellent — highly scrubbable; resists moisture, grease, and repeated cleaning<br>
+      <strong>Hide:</strong> Low — substrate defects, tool marks, and surface variation are clearly visible; thorough prep is required<br>
+      <strong>Touch-up:</strong> Difficult — sheen variation is obvious; spot repairs rarely match; full coat often required<br>
+      <strong>Metal doors &amp; frames:</strong> Standard field finish for hollow metal (HM) doors and frames. Most HM arrives factory-primed with gray alkyd or epoxy primer — verify compatibility with the field finish before specifying. Use a DTM (direct-to-metal) latex or alkyd semi-gloss for unprimed or field-cut metal.<br>
+      <strong>MPI refs:</strong> #47 (Alkyd Semi-Gloss, Int.), #48 (Latex Semi-Gloss, Int.) — verify via MPI APL
+    </div>
+  </div>
+  <div class="cell-visual">
+    <div class="paint-diag">
+      <div class="pd-layer pd-finish2"><span class="pd-label">Finish coat 2</span></div>
+      <div class="pd-layer pd-finish"><span class="pd-label">Finish coat 1</span></div>
+      <div class="pd-layer pd-primer"><span class="pd-label">Primer / sealer</span></div>
+      <div class="pd-layer pd-sub"><span class="pd-label">Substrate</span></div>
+    </div>
+    <div class="diag-caption">Semi-gloss — strong specular highlight</div>
+  </div>
+  <div class="cell-suit">
+    <div>
+      <div class="suit-label">Typical Use</div>
+      <div class="suit-items">
+        <div class="suit-item">All interior trim, doors, frames, and window stools — default commercial trim spec</div>
+        <div class="suit-item">Wainscot, kitchen cabinets, lockers, and shelving</div>
+        <div class="suit-item">Bathroom walls in commercial and institutional applications</div>
+      </div>
+    </div>
+    <div class="suit-note">Default trim finish on virtually all commercial projects. Surface preparation is critical at this sheen level — any substrate deficiency will be clearly visible in raking light.</div>
+    <div>
+      <div class="mfr-label">Common Products</div>
+      <div class="mfr-links">
+        <a class="mfr-link" href="https://www.sherwin-williams.com" target="_blank" rel="noopener">SW ProMar 200 Semi-Gloss</a>
+        <a class="mfr-link" href="https://www.ppgpaints.com" target="_blank" rel="noopener">PPG SPEEDHIDE Semi-Gloss</a>
+        <a class="mfr-link" href="https://www.benjaminmoore.com" target="_blank" rel="noopener">BM Ultra Spec 500 Semi-Gloss</a>
+        <a class="mfr-link" href="https://www.sherwin-williams.com" target="_blank" rel="noopener">SW ProIndustrial DTM (metal)</a>
+        <a class="mfr-link" href="https://www.ppgpaints.com" target="_blank" rel="noopener">PPG PITT-TECH Plus (metal)</a>
+        <a class="mfr-link" href="https://www.benjaminmoore.com" target="_blank" rel="noopener">BM Acrylic DTM Enamel (metal)</a>
+        <a class="mfr-link" href="https://www.benjaminmoore.com" target="_blank" rel="noopener">BM Pre-Cat WB Epoxy (institutional)</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HIGH GLOSS -->
+<div class="paint-row">
+  <div class="cell-type">
+    <div class="sheen-abbr">Gloss</div>
+    <div class="sheen-pill">MPI G7</div>
+    <div class="sheen-pill">&gt;70% @ 60°</div>
+    <div class="sheen-pill">MPI #47 / #96</div>
+  </div>
+  <div class="cell-desc">
+    <div class="sheen-name">High Gloss</div>
+    <div class="sheen-tags">
+      <span class="tag">Specialty</span>
+      <span class="tag">Max Durability</span>
+      <span class="tag">Institutional</span>
+    </div>
+    <div class="sheen-spec">
+      <strong>Sheen at 60°:</strong> &gt;70% — mirror-like; maximum specular reflectance<br>
+      <strong>Washability:</strong> Excellent — maximum abrasion and moisture resistance<br>
+      <strong>Hide:</strong> Very low — every surface imperfection, brush mark, and lap line is visible; meticulous prep is non-negotiable<br>
+      <strong>Touch-up:</strong> Very difficult — spot repairs are almost always visible; plan for full-coat application from the start<br>
+      <strong>MPI refs:</strong> #47 (Alkyd Gloss, Int.), #96 (Latex Gloss, Int.) — verify via MPI APL
+    </div>
+  </div>
+  <div class="cell-visual">
+    <div class="paint-diag">
+      <div class="pd-layer pd-finish2"><span class="pd-label">Finish coat 2</span></div>
+      <div class="pd-layer pd-finish"><span class="pd-label">Finish coat 1</span></div>
+      <div class="pd-layer pd-primer"><span class="pd-label">Primer / sealer</span></div>
+      <div class="pd-layer pd-sub"><span class="pd-label">Substrate</span></div>
+    </div>
+    <div class="diag-caption">High gloss — mirror-like specular</div>
+  </div>
+  <div class="cell-suit">
+    <div>
+      <div class="suit-label">Typical Use</div>
+      <div class="suit-items">
+        <div class="suit-item">Institutional doors and frames — schools, hospitals, correctional</div>
+        <div class="suit-item">Accent millwork and highlight architectural elements</div>
+        <div class="suit-item">High-abuse surfaces requiring maximum abrasion resistance</div>
+      </div>
+    </div>
+    <div>
+      <div class="suit-label">Avoid</div>
+      <div class="suit-items">
+        <div class="suit-item avoid">Surfaces with any prep deficiencies — imperfections are magnified</div>
+        <div class="suit-item avoid">Standard wall and trim work where future touch-up is expected</div>
+      </div>
+    </div>
+    <div>
+      <div class="mfr-label">Common Products</div>
+      <div class="mfr-links">
+        <a class="mfr-link" href="https://www.sherwin-williams.com" target="_blank" rel="noopener">SW ProClassic Alkyd Enamel</a>
+        <a class="mfr-link" href="https://www.ppgpaints.com" target="_blank" rel="noopener">PPG BREAK-THROUGH!</a>
+        <a class="mfr-link" href="https://www.benjaminmoore.com" target="_blank" rel="noopener">BM Pre-Cat WB Epoxy</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end paint-rows -->
+
+<!-- ── Section 2: Paint Systems by Substrate ── -->
+<div class="section-head">
+  <div class="section-eyebrow">Section 02</div>
+  <h2>Paint Systems<br><em>by Substrate</em></h2>
+</div>
+
+<div class="sys-grid">
+
+  <!-- New GWB -->
+  <div class="sys-card">
+    <div class="sys-substrate">Interior · Walls &amp; Ceilings</div>
+    <div class="sys-name">New Gypsum<br>Wallboard</div>
+    <div class="sys-steps">
+      <div class="sys-step">
+        <span class="step-num">1</span>
+        <span>PVA drywall sealer — 1 coat, full surface</span>
+      </div>
+      <div class="sys-step">
+        <span class="step-num">2</span>
+        <span>Latex finish — 2 coats</span>
+      </div>
+    </div>
+    <div class="sys-note">Never skip primer on new GWB. Unprimed paper face absorbs paint unevenly, causing "flashing" — dull patches where suction varied. PVA sealer is mandatory, not optional.</div>
+  </div>
+
+  <!-- Existing Painted -->
+  <div class="sys-card">
+    <div class="sys-substrate">Interior · Repaint</div>
+    <div class="sys-name">Existing Painted<br>Surfaces</div>
+    <div class="sys-steps">
+      <div class="sys-step">
+        <span class="step-num">1</span>
+        <span>Wash surface; fill cracks and holes; sand repairs smooth</span>
+      </div>
+      <div class="sys-step">
+        <span class="step-num">2</span>
+        <span>Spot prime all patched areas</span>
+      </div>
+      <div class="sys-step">
+        <span class="step-num">3</span>
+        <span>1–2 finish coats (full prime coat if significant color change)</span>
+      </div>
+    </div>
+    <div class="sys-note">When applying lower sheen over higher sheen (e.g. flat over semi-gloss), degloss or apply a full prime coat over the entire surface — finish paint will not bond reliably to high-gloss substrates.</div>
+  </div>
+
+  <!-- Plaster -->
+  <div class="sys-card">
+    <div class="sys-substrate">Interior · Walls</div>
+    <div class="sys-name">New Plaster</div>
+    <div class="sys-steps">
+      <div class="sys-step">
+        <span class="step-num">1</span>
+        <span>Allow full cure — minimum 30 days; 60+ days for high-lime plaster</span>
+      </div>
+      <div class="sys-step">
+        <span class="step-num">2</span>
+        <span>Alkali-resistant latex primer — 1 coat</span>
+      </div>
+      <div class="sys-step">
+        <span class="step-num">3</span>
+        <span>Latex finish — 2 coats</span>
+      </div>
+    </div>
+    <div class="sys-note">The high pH of fresh plaster degrades standard paint film. Test with litmus paper before priming — pH &gt;9 requires additional cure time. Alkali-resistant primer is mandatory, not a substitute for adequate cure.</div>
+  </div>
+
+  <!-- Wood Trim -->
+  <div class="sys-card">
+    <div class="sys-substrate">Interior · Trim</div>
+    <div class="sys-name">Wood Trim<br>(Painted Finish)</div>
+    <div class="sys-steps">
+      <div class="sys-step">
+        <span class="step-num">1</span>
+        <span>Sand 120–150 grit; fill nail holes and open grain</span>
+      </div>
+      <div class="sys-step">
+        <span class="step-num">2</span>
+        <span>Alkyd or latex wood primer — 1 coat</span>
+      </div>
+      <div class="sys-step">
+        <span class="step-num">3</span>
+        <span>Semi-gloss or gloss finish — 2 coats; sand lightly between with 220 grit</span>
+      </div>
+    </div>
+    <div class="sys-note">Back-prime all six faces of trim before installation — painting only the face traps moisture, leading to cupping, grain raise, and paint failure at edges and back face.</div>
+  </div>
+
+  <!-- Concrete / CMU -->
+  <div class="sys-card">
+    <div class="sys-substrate">Interior · Masonry</div>
+    <div class="sys-name">Concrete / CMU</div>
+    <div class="sys-steps">
+      <div class="sys-step">
+        <span class="step-num">1</span>
+        <span>Clean surface; remove efflorescence; patch spalls and voids</span>
+      </div>
+      <div class="sys-step">
+        <span class="step-num">2</span>
+        <span>Heavy-bodied block filler — fills open face texture</span>
+      </div>
+      <div class="sys-step">
+        <span class="step-num">3</span>
+        <span>Latex finish (eggshell or satin typical) — 2 coats</span>
+      </div>
+    </div>
+    <div class="sys-note">Block filler is not optional — standard primer cannot bridge the open CMU face texture. Use exterior-grade block filler for below-grade or moisture-exposed masonry.</div>
+  </div>
+
+  <!-- Hollow Metal Doors & Frames -->
+  <div class="sys-card">
+    <div class="sys-substrate">Interior · Metal Doors &amp; Frames</div>
+    <div class="sys-name">Hollow Metal Doors<br>&amp; Frames</div>
+    <div class="sys-steps">
+      <div class="sys-step">
+        <span class="step-num">1</span>
+        <span>Verify factory primer — most HM ships with gray alkyd or epoxy shop primer already applied</span>
+      </div>
+      <div class="sys-step">
+        <span class="step-num">2</span>
+        <span>Spot prime any abraded or unprimed areas (field cuts, welds) with rust-inhibitive primer</span>
+      </div>
+      <div class="sys-step">
+        <span class="step-num">3</span>
+        <span>DTM latex or alkyd semi-gloss (G6) — 2 coats over factory primer; confirm compatibility with shop primer type</span>
+      </div>
+    </div>
+    <div class="sys-note">Do not specify standard wall paint on metal doors and frames — use a DTM or enamel product rated for metal substrates. For galvanized frames, use galvanized-metal primer — standard rust-inhibitive primers do not bond to zinc. Coordinate finish color with hardware schedule. Common products: SW ProIndustrial DTM, PPG PITT-TECH Plus, BM Acrylic DTM Enamel. For institutional high-abuse applications (schools, hospitals, correctional), BM Pre-Catalyzed Waterborne Epoxy provides superior hardness and chemical resistance.</div>
+  </div>
+
+</div><!-- end sys-grid -->
+
+<!-- ── Section 3: VOC & Sustainability ── -->
+<div class="section-head">
+  <div class="section-eyebrow">Section 03</div>
+  <h2>VOC Limits &amp;<br><em>Sustainability Certifications</em></h2>
+</div>
+
+<div class="sys-grid" style="grid-template-columns: repeat(2, 1fr);">
+
+  <div class="sys-card" style="border-bottom: none;">
+    <div class="sys-substrate">Regulations · VOC Limits</div>
+    <div class="sys-name">VOC Compliance</div>
+    <div class="sys-steps">
+      <div class="sys-step">
+        <span class="step-num">EPA</span>
+        <span><strong>Architectural Rule:</strong> Flat: ≤50 g/L; Non-flat: ≤150 g/L. Federal minimums — local rules are stricter.</span>
+      </div>
+      <div class="sys-step">
+        <span class="step-num">SCAQMD</span>
+        <span><strong>South Coast (CA):</strong> Flat: ≤50 g/L; Non-flat: ≤100 g/L. One of the strictest U.S. limits — confirm if project is in an OTC or SCAQMD jurisdiction.</span>
+      </div>
+      <div class="sys-step">
+        <span class="step-num">Zero VOC</span>
+        <span>Products labeled "Zero VOC" must be ≤5 g/L per EPA. Tinted versions may exceed this — always verify tinted VOC with the manufacturer's data sheet, not just the base paint.</span>
+      </div>
+    </div>
+    <div class="sys-note">VOC limits apply to the coating as applied (including tint). Verify the tinted product VOC — many "Zero VOC" bases exceed limits once colorant is added. Obtain Safety Data Sheets (SDS) for all products.</div>
+  </div>
+
+  <div class="sys-card" style="border-right: none; border-bottom: none;">
+    <div class="sys-substrate">Green Building · Certifications</div>
+    <div class="sys-name">LEED · WELL · Declare</div>
+    <div class="sys-steps">
+      <div class="sys-step">
+        <span class="step-num">LEED</span>
+        <span><strong>EQ Credit — Low-Emitting Materials:</strong> Paints must meet SCAQMD Rule 1113 or Green Seal GS-11 limits. Applies to wet-applied products installed inside the waterproofing layer. Document VOC content at time of installation.</span>
+      </div>
+      <div class="sys-step">
+        <span class="step-num">WELL</span>
+        <span><strong>Feature X5 — Material Restrictions:</strong> Limits VOCs in wet-applied products. Aligns closely with LEED EQ requirements. Green Seal GS-11 or GREENGUARD Gold certification is typically accepted as compliance evidence.</span>
+      </div>
+      <div class="sys-step">
+        <span class="step-num">Declare</span>
+        <span><strong>Living Building Challenge (ILFI):</strong> Declare labels disclose full ingredient transparency. Avoid Red List chemicals — many solvent-based and alkyd paints contain compounds on the Red List. Prefer water-based latex with Declare or HPD documentation.</span>
+      </div>
+      <div class="sys-step">
+        <span class="step-num">GREENGUARD</span>
+        <span>UL GREENGUARD Gold (formerly Children &amp; Schools) is the most commonly accepted third-party VOC certification for paint. SW and PPG both publish GREENGUARD-certified product lines — confirm the specific product is listed.</span>
+      </div>
+    </div>
+    <div class="sys-note">For health-sensitive occupancies (schools, healthcare, childcare), specify GREENGUARD Gold certified products at minimum. For Living Building Challenge projects, request HPDs (Health Product Declarations) and avoid alkyd/solvent-based products where possible.</div>
+  </div>
+
+</div>
+
+<!-- ── Section 4: Glossary ── -->
+<div class="section-head">
+  <div class="section-eyebrow">Section 04</div>
+  <h2>Glossary<br><em>Common Paint Terms</em></h2>
+</div>
+
+<div class="sys-grid" style="grid-template-columns: repeat(3, 1fr);">
+
+  <div class="sys-card">
+    <div class="sys-name" style="font-size: 0.95rem; margin-bottom: 0.6rem;">Latex</div>
+    <div class="sys-note" style="border-top: none; padding-top: 0; font-style: normal; font-size: 0.78rem; color: var(--ink);">Water-based paint using acrylic or vinyl-acrylic binders. Fast dry time, low odor, easy cleanup, and lower VOCs than alkyd. The dominant binder type for commercial interior painting. Performance has largely matched alkyd for most interior applications. Sometimes called "waterborne" or "acrylic latex."</div>
+  </div>
+
+  <div class="sys-card">
+    <div class="sys-name" style="font-size: 0.95rem; margin-bottom: 0.6rem;">Alkyd</div>
+    <div class="sys-note" style="border-top: none; padding-top: 0; font-style: normal; font-size: 0.78rem; color: var(--ink);">Oil-based paint using alkyd resin binders derived from oil and alcohol. Historically preferred for trim and metal for its hard, durable film. Higher VOCs, longer dry time, requires solvent cleanup. Increasingly replaced by waterborne alkyd formulas that use water as carrier but retain alkyd's hard finish. Often called "oil-based" in the field.</div>
+  </div>
+
+  <div class="sys-card">
+    <div class="sys-name" style="font-size: 0.95rem; margin-bottom: 0.6rem;">DTM — Direct to Metal</div>
+    <div class="sys-note" style="border-top: none; padding-top: 0; font-style: normal; font-size: 0.78rem; color: var(--ink);">A paint formulated to bond directly to bare or primed metal without a separate primer coat. Contains corrosion inhibitors and adhesion promoters in the finish coat. Used on structural steel, hollow metal doors and frames, pipes, and miscellaneous metals. Examples: SW ProIndustrial DTM, PPG PITT-TECH Plus.</div>
+  </div>
+
+  <div class="sys-card">
+    <div class="sys-name" style="font-size: 0.95rem; margin-bottom: 0.6rem;">VOC — Volatile Organic Compound</div>
+    <div class="sys-note" style="border-top: none; padding-top: 0; font-style: normal; font-size: 0.78rem; color: var(--ink);">Organic chemicals that evaporate at room temperature, contributing to indoor air quality issues and smog formation. In paint, VOCs are released during application and drying. Measured in grams per liter (g/L). Regulated by EPA, SCAQMD, and required for LEED and WELL certification compliance.</div>
+  </div>
+
+  <div class="sys-card">
+    <div class="sys-name" style="font-size: 0.95rem; margin-bottom: 0.6rem;">MPI — Master Painters Institute</div>
+    <div class="sys-note" style="border-top: none; padding-top: 0; font-style: normal; font-size: 0.78rem; color: var(--ink);">Industry organization that maintains the Approved Products List (APL) — a catalog of tested and certified paint products referenced by MPI number in commercial specifications. MPI gloss levels (G1–G7) are the standard sheen classification used in specs. CSI MasterSpec and most commercial painting specs (Section 09 91 00) reference MPI.</div>
+  </div>
+
+  <div class="sys-card">
+    <div class="sys-name" style="font-size: 0.95rem; margin-bottom: 0.6rem;">PVA Sealer</div>
+    <div class="sys-note" style="border-top: none; padding-top: 0; font-style: normal; font-size: 0.78rem; color: var(--ink);">Polyvinyl acetate drywall primer/sealer. Applied to new gypsum wallboard before finish coats to seal the paper face and equalize suction across the surface. Without it, finish paint absorbs unevenly into the paper and compound, causing "flashing." Not interchangeable with general-purpose latex primer.</div>
+  </div>
+
+  <div class="sys-card">
+    <div class="sys-name" style="font-size: 0.95rem; margin-bottom: 0.6rem;">Dry Film Thickness (DFT)</div>
+    <div class="sys-note" style="border-top: none; padding-top: 0; font-style: normal; font-size: 0.78rem; color: var(--ink);">The thickness of a paint film after solvent has evaporated, measured in mils (thousandths of an inch). Critical for protective coatings on metal — insufficient DFT reduces corrosion resistance. For standard interior latex, DFT is less critical but affects hide and durability. Verify with manufacturer data sheets when writing a tight spec.</div>
+  </div>
+
+  <div class="sys-card">
+    <div class="sys-name" style="font-size: 0.95rem; margin-bottom: 0.6rem;">Enamel</div>
+    <div class="sys-note" style="border-top: none; padding-top: 0; font-style: normal; font-size: 0.78rem; color: var(--ink);">Originally referred to oil-based gloss paints that dry to a hard, smooth film. Today "enamel" is used loosely for any hard-finish paint in semi-gloss or gloss, including waterborne alkyd enamels. In specs, "alkyd enamel" typically means a hard, oil-based trim paint; "latex enamel" means a hard-film water-based alternative. Verify the binder type when reviewing product submittals.</div>
+  </div>
+
+  <div class="sys-card">
+    <div class="sys-name" style="font-size: 0.95rem; margin-bottom: 0.6rem;">Epoxy / Pre-Catalyzed Waterborne Epoxy</div>
+    <div class="sys-note" style="border-top: none; padding-top: 0; font-style: normal; font-size: 0.78rem; color: var(--ink);">Two-component or pre-catalyzed coating that cures to an exceptionally hard, chemical-resistant film. Used in institutional settings (hospitals, schools, correctional), commercial kitchens, locker rooms, and other high-abuse environments. "Pre-catalyzed" means the hardener is already mixed in, simplifying application. Higher cost and more demanding application than standard latex — but significantly more durable. Benjamin Moore's Pre-Catalyzed Waterborne Epoxy is a commonly specified product in this category.</div>
+  </div>
+
+  <div class="sys-card">
+    <div class="sys-name" style="font-size: 0.95rem; margin-bottom: 0.6rem;">Flashing</div>
+    <div class="sys-note" style="border-top: none; padding-top: 0; font-style: normal; font-size: 0.78rem; color: var(--ink);">Uneven sheen or color variation in a dried paint film, typically caused by differential suction across the substrate. Common on new drywall that wasn't primed — areas over tape joints absorb less paint than areas over raw paper, creating visible patches. Prevented by proper priming. Also caused by touching up flat paint with a different batch or applicator.</div>
+  </div>
+
+</div>
+
+<div class="disclaimer">
+  <p><strong>For reference only.</strong> MPI gloss levels (G1–G7) are industry-standard designations; individual paint product MPI catalog numbers must be verified against the current MPI Approved Products List. Confirm VOC limits comply with local air quality regulations (SCAQMD, OTC, etc.) and project sustainability requirements. Surface preparation standards reference SSPC (now AMPP). Verify all specifications with manufacturer documentation before applying to a project.</p>
+</div>
+
+<footer>
+  <p>MPI GLOSS SCALE G1–G7 &nbsp;|&nbsp; FOR REFERENCE ONLY</p>
+  <a href="../index.html">← ArchOS</a>
+</footer>
+
+</body>
+</html>
