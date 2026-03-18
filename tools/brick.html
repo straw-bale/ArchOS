@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brick &amp; Unit Masonry — ArchOS</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+
+/* ── Section heads ── */
+.section-head {
+  border-top: 2px solid var(--ink);
+  padding: 2rem 4rem 0;
+}
+.section-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+.section-head h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.6rem;
+  font-weight: 400;
+  line-height: 1.2;
+  padding-bottom: 1.5rem;
+}
+.section-head h2 em { font-style: italic; color: var(--ink-muted); }
+
+/* ─────────────────────────────────────────────
+   SIZES TABLE
+───────────────────────────────────────────── */
+.size-col-headers {
+  display: grid;
+  grid-template-columns: 160px 1fr 1fr 1fr 120px;
+  padding: 0.75rem 4rem;
+  border-bottom: 2px solid var(--ink);
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.size-col-headers span {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-muted);
+}
+
+.size-row {
+  display: grid;
+  grid-template-columns: 160px 1fr 1fr 1fr 120px;
+  border-bottom: 1px solid var(--rule);
+  min-height: 56px;
+  align-items: center;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: fadeUp 0.4s forwards;
+}
+.size-row:nth-child(1)  { animation-delay: 0.04s; }
+.size-row:nth-child(2)  { animation-delay: 0.07s; }
+.size-row:nth-child(3)  { animation-delay: 0.10s; }
+.size-row:nth-child(4)  { animation-delay: 0.13s; }
+.size-row:nth-child(5)  { animation-delay: 0.16s; }
+.size-row:nth-child(6)  { animation-delay: 0.19s; }
+.size-row:nth-child(7)  { animation-delay: 0.22s; }
+.size-row:nth-child(8)  { animation-delay: 0.25s; }
+.size-row:nth-child(9)  { animation-delay: 0.28s; }
+.size-row:nth-child(10) { animation-delay: 0.31s; }
+.size-row:hover { background: rgba(255,255,255,0.45); }
+
+.size-cell {
+  padding: 0.75rem 1.25rem;
+  border-right: 1px solid var(--rule);
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.size-cell:first-child { padding-left: 4rem; }
+.size-cell:last-child  { border-right: none; padding-right: 4rem; }
+
+.sz-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.2;
+}
+.sz-dim {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--ink);
+  letter-spacing: 0.04em;
+}
+.sz-note {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  color: var(--ink-muted);
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+}
+.sz-coursing {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+}
+
+/* coursing diagram */
+.course-diag {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  overflow: hidden;
+  width: 36px;
+  flex-shrink: 0;
+  margin-right: 0.75rem;
+}
+.course-brick {
+  background: #c8b89a;
+  border-bottom: 1px solid #e8dfd0;
+}
+.course-joint {
+  background: #e8dfd0;
+  height: 2px;
+}
+
+/* ─────────────────────────────────────────────
+   BRICK TYPES (roofing-style rows)
+───────────────────────────────────────────── */
+.type-col-headers {
+  display: grid;
+  grid-template-columns: 130px 1fr 1fr;
+  padding: 0.75rem 4rem;
+  border-bottom: 2px solid var(--ink);
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.type-col-headers span {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-muted);
+}
+
+.type-row {
+  display: grid;
+  grid-template-columns: 130px 1fr 1fr;
+  border-bottom: 1px solid var(--rule);
+  min-height: 160px;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: fadeUp 0.45s forwards;
+}
+.type-row:nth-child(1) { animation-delay: 0.05s; }
+.type-row:nth-child(2) { animation-delay: 0.09s; }
+.type-row:nth-child(3) { animation-delay: 0.13s; }
+.type-row:nth-child(4) { animation-delay: 0.17s; }
+.type-row:nth-child(5) { animation-delay: 0.21s; }
+.type-row:nth-child(6) { animation-delay: 0.25s; }
+.type-row:hover { background: rgba(255,255,255,0.45); }
+
+.cell-type {
+  border-right: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 0.75rem;
+  gap: 0.5rem;
+  text-align: center;
+}
+.type-abbr {
+  font-family: 'DM Serif Display', serif;
+  font-size: 0.9rem;
+  color: var(--accent);
+  line-height: 1.2;
+}
+.type-std-pill {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.48rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+  background: var(--tag-bg);
+  padding: 0.12rem 0.4rem;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+.cell-desc {
+  border-right: 1px solid var(--rule);
+  padding: 1.75rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.85rem;
+}
+.type-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.2rem;
+  font-weight: 400;
+  line-height: 1.25;
+}
+.type-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.type-spec { font-size: 0.8rem; color: var(--ink-muted); line-height: 1.65; }
+.type-spec strong { color: var(--ink); font-weight: 500; }
+
+.cell-suit {
+  padding: 1.75rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+}
+.suit-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-muted);
+  margin-bottom: 0.2rem;
+}
+.suit-items { display: flex; flex-direction: column; gap: 0.35rem; }
+.suit-item {
+  font-size: 0.78rem;
+  color: var(--ink);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  line-height: 1.35;
+}
+.suit-item::before {
+  content: '';
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+  margin-top: 0.35rem;
+}
+.suit-note {
+  font-size: 0.72rem;
+  color: var(--ink-muted);
+  line-height: 1.55;
+  font-style: italic;
+}
+.grade-pills { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.25rem; }
+.grade-pill {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.56rem;
+  letter-spacing: 0.06em;
+  background: var(--tag-bg);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 0.15rem 0.5rem;
+  color: var(--ink-muted);
+}
+.grade-pill.sw { background: #e8f0e8; color: #2a6e3f; border-color: #b8d8b8; }
+.grade-pill.mw { background: #fff4e0; color: #8a5200; border-color: #e0c880; }
+.grade-pill.nw { background: var(--tag-bg); }
+
+/* ─────────────────────────────────────────────
+   MORTAR TYPES
+───────────────────────────────────────────── */
+.mortar-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  border-bottom: 1px solid var(--rule);
+}
+.mortar-card {
+  padding: 1.75rem 1.5rem;
+  border-right: 1px solid var(--rule);
+  opacity: 0;
+  transform: translateY(12px);
+  animation: fadeUp 0.4s forwards;
+}
+.mortar-card:last-child { border-right: none; }
+.mortar-card:nth-child(1) { animation-delay: 0.05s; }
+.mortar-card:nth-child(2) { animation-delay: 0.09s; }
+.mortar-card:nth-child(3) { animation-delay: 0.13s; }
+.mortar-card:nth-child(4) { animation-delay: 0.17s; }
+.mortar-card:nth-child(5) { animation-delay: 0.21s; }
+
+.mortar-type {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2rem;
+  font-weight: 400;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+.mortar-strength {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-muted);
+  margin-bottom: 1rem;
+}
+.mortar-bar-wrap {
+  height: 4px;
+  background: var(--rule);
+  border-radius: 2px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+.mortar-bar {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--accent);
+}
+.mortar-detail {
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+  line-height: 1.6;
+  margin-bottom: 0.85rem;
+}
+.mortar-detail strong { color: var(--ink); font-weight: 500; }
+.mortar-ratio {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  color: var(--ink-muted);
+  background: var(--tag-bg);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 0.4rem 0.6rem;
+  line-height: 1.6;
+  margin-bottom: 0.75rem;
+}
+
+/* ─────────────────────────────────────────────
+   JOINT PROFILES
+───────────────────────────────────────────── */
+.joint-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid var(--rule);
+}
+.joint-card {
+  padding: 1.5rem 1.25rem 1.25rem;
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  opacity: 0;
+  transform: translateY(12px);
+  animation: fadeUp 0.4s forwards;
+}
+.joint-card:nth-child(3n) { border-right: none; }
+.joint-card:nth-child(4),
+.joint-card:nth-child(5),
+.joint-card:nth-child(6) { border-bottom: none; }
+.joint-card:nth-child(1) { animation-delay: 0.04s; }
+.joint-card:nth-child(2) { animation-delay: 0.07s; }
+.joint-card:nth-child(3) { animation-delay: 0.10s; }
+.joint-card:nth-child(4) { animation-delay: 0.13s; }
+.joint-card:nth-child(5) { animation-delay: 0.16s; }
+.joint-card:nth-child(6) { animation-delay: 0.19s; }
+
+.joint-svg-wrap {
+  width: 100%;
+  margin-bottom: 0.85rem;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  overflow: hidden;
+  background: #f2ede4;
+}
+.joint-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 0.92rem;
+  font-weight: 400;
+  margin-bottom: 0.35rem;
+}
+.joint-note {
+  font-size: 0.72rem;
+  color: var(--ink-muted);
+  line-height: 1.55;
+}
+.joint-rec {
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.52rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 0.5rem;
+  padding: 0.12rem 0.4rem;
+  border-radius: 2px;
+  background: var(--tag-bg);
+  border: 1px solid var(--rule);
+  color: var(--ink-muted);
+}
+.joint-rec.best  { background: #e8f0e8; color: #2a6e3f; border-color: #b8d8b8; }
+.joint-rec.avoid { background: #faeaea; color: #8a2020; border-color: #e0b0b0; }
+
+/* ─────────────────────────────────────────────
+   BOND PATTERNS
+───────────────────────────────────────────── */
+.bond-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid var(--rule);
+}
+.bond-card {
+  padding: 1.75rem 1.5rem;
+  border-right: 1px solid var(--rule);
+  opacity: 0;
+  transform: translateY(12px);
+  animation: fadeUp 0.4s forwards;
+}
+.bond-card:nth-child(4n) { border-right: none; }
+.bond-card:nth-child(1) { animation-delay: 0.05s; }
+.bond-card:nth-child(2) { animation-delay: 0.09s; }
+.bond-card:nth-child(3) { animation-delay: 0.13s; }
+.bond-card:nth-child(4) { animation-delay: 0.17s; }
+.bond-card:nth-child(5) { animation-delay: 0.21s; }
+.bond-card:nth-child(6) { animation-delay: 0.25s; }
+.bond-card:nth-child(7) { animation-delay: 0.29s; }
+.bond-card:nth-child(8) { animation-delay: 0.33s; }
+
+.bond-diag {
+  width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  background: #f5f0e8;
+}
+.bond-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1rem;
+  font-weight: 400;
+  margin-bottom: 0.4rem;
+  line-height: 1.2;
+}
+.bond-detail {
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+  line-height: 1.6;
+  margin-bottom: 0.6rem;
+}
+.bond-badges { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+
+/* ─────────────────────────────────────────────
+   COLOR PALETTE
+───────────────────────────────────────────── */
+.color-band {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  border-bottom: 1px solid var(--rule);
+}
+.color-swatch {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--rule);
+  opacity: 0;
+  transform: translateY(12px);
+  animation: fadeUp 0.4s forwards;
+}
+.color-swatch:last-child { border-right: none; }
+.color-swatch:nth-child(1) { animation-delay: 0.04s; }
+.color-swatch:nth-child(2) { animation-delay: 0.07s; }
+.color-swatch:nth-child(3) { animation-delay: 0.10s; }
+.color-swatch:nth-child(4) { animation-delay: 0.13s; }
+.color-swatch:nth-child(5) { animation-delay: 0.16s; }
+.color-swatch:nth-child(6) { animation-delay: 0.19s; }
+.color-swatch:nth-child(7) { animation-delay: 0.22s; }
+.color-swatch:nth-child(8) { animation-delay: 0.25s; }
+
+.swatch-block { height: 80px; }
+.swatch-info {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--rule);
+}
+.swatch-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 0.85rem;
+  font-weight: 400;
+  line-height: 1.2;
+  margin-bottom: 0.25rem;
+}
+.swatch-desc {
+  font-size: 0.68rem;
+  color: var(--ink-muted);
+  line-height: 1.5;
+}
+
+/* ─────────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .mortar-grid { grid-template-columns: repeat(3, 1fr); }
+  .bond-grid   { grid-template-columns: repeat(2, 1fr); }
+  .color-band  { grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 960px) {
+  .section-head { padding: 1.5rem; }
+  .size-col-headers, .type-col-headers { display: none; }
+  .size-row {
+    grid-template-columns: 1fr;
+    padding: 1rem 1.5rem;
+    min-height: unset;
+    gap: 0.25rem;
+  }
+  .size-cell { padding: 0.25rem 0; border-right: none; height: auto; align-items: flex-start; }
+  .size-cell:first-child { padding-left: 0; }
+  .size-cell:last-child  { padding-right: 0; }
+  .type-row { grid-template-columns: 1fr; border: 1px solid var(--rule); margin: 0.75rem; border-radius: 4px; min-height: unset; }
+  .cell-type { flex-direction: row; justify-content: flex-start; padding: 1rem 1.5rem; border-right: none; border-bottom: 1px solid var(--rule); }
+  .cell-desc, .cell-suit { border-right: none; border-bottom: 1px solid var(--rule); }
+  .mortar-grid { grid-template-columns: 1fr 1fr; }
+  .joint-grid  { grid-template-columns: 1fr 1fr; }
+  .joint-card:nth-child(3n) { border-right: 1px solid var(--rule); }
+  .joint-card:nth-child(2n) { border-right: none; }
+  .joint-card:nth-child(4),
+  .joint-card:nth-child(5),
+  .joint-card:nth-child(6) { border-bottom: 1px solid var(--rule); }
+  .joint-card:nth-child(5),
+  .joint-card:nth-child(6) { border-bottom: none; }
+  .bond-grid   { grid-template-columns: 1fr; }
+  .color-band  { grid-template-columns: repeat(4, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<nav class="site-nav"><a href="../index.html">ArchOS</a></nav>
+
+<header>
+  <div>
+    <div class="header-eyebrow">Masonry · Unit Masonry Systems</div>
+    <h1>Brick<br><em>Sizes, Types &amp; Details</em></h1>
+  </div>
+  <div class="header-meta">
+    STANDARDS: ASTM C216 / C62<br>MORTAR: ASTM C270<br>JOINTS: BIA TN-8<br>CSI: 04 20 00
+  </div>
+</header>
+
+<div class="intro">
+  <p>Brick is specified by grade (weather exposure), type (appearance), and size. Coursing, mortar type, joint profile, and bond pattern are interdependent decisions — all affect performance, appearance, and cost. Sizes shown are ASTM/BIA standard; regional and manufacturer-specific sizes vary.</p>
+  <div class="intro-stat">
+    <span class="num">10</span>
+    <span class="label">Standard<br>Brick Sizes</span>
+  </div>
+</div>
+
+<!-- ─── BRICK SIZES ─────────────────────────────────────────── -->
+<div class="section-head">
+  <div class="section-eyebrow">BIA Technical Note 10 · ASTM C216</div>
+  <h2>Standard Brick <em>Sizes</em></h2>
+</div>
+
+<div class="size-col-headers">
+  <span>Name</span>
+  <span>Specified W × H × L</span>
+  <span>Nominal W × H × L</span>
+  <span>Coursing Height</span>
+  <span>Joint</span>
+</div>
+
+<div id="sizes">
+
+  <div class="size-row">
+    <div class="size-cell"><div class="sz-name">Modular</div></div>
+    <div class="size-cell"><span class="sz-dim">3⅝″ × 2¼″ × 7⅝″</span></div>
+    <div class="size-cell"><span class="sz-dim">4″ × 2⅔″ × 8″</span></div>
+    <div class="size-cell"><span class="sz-coursing">3 courses = 8″</span><span class="sz-note" style="margin-left:0.75rem">Most common US standard</span></div>
+    <div class="size-cell"><span class="sz-dim">⅜″</span></div>
+  </div>
+
+  <div class="size-row">
+    <div class="size-cell"><div class="sz-name">Engineer Modular</div></div>
+    <div class="size-cell"><span class="sz-dim">3⅝″ × 2¾″ × 7⅝″</span></div>
+    <div class="size-cell"><span class="sz-dim">4″ × 3⅕″ × 8″</span></div>
+    <div class="size-cell"><span class="sz-coursing">5 courses = 16″</span></div>
+    <div class="size-cell"><span class="sz-dim">⅜″</span></div>
+  </div>
+
+  <div class="size-row">
+    <div class="size-cell"><div class="sz-name">Closure Modular</div></div>
+    <div class="size-cell"><span class="sz-dim">3⅝″ × 3⅝″ × 7⅝″</span></div>
+    <div class="size-cell"><span class="sz-dim">4″ × 4″ × 8″</span></div>
+    <div class="size-cell"><span class="sz-coursing">3 courses = 12″</span></div>
+    <div class="size-cell"><span class="sz-dim">⅜″</span></div>
+  </div>
+
+  <div class="size-row">
+    <div class="size-cell"><div class="sz-name">Roman</div></div>
+    <div class="size-cell"><span class="sz-dim">3⅝″ × 1⅝″ × 11⅝″</span></div>
+    <div class="size-cell"><span class="sz-dim">4″ × 2″ × 12″</span></div>
+    <div class="size-cell"><span class="sz-coursing">2 courses = 4″</span><span class="sz-note" style="margin-left:0.75rem">Horizontal emphasis</span></div>
+    <div class="size-cell"><span class="sz-dim">⅜″</span></div>
+  </div>
+
+  <div class="size-row">
+    <div class="size-cell"><div class="sz-name">Norman</div></div>
+    <div class="size-cell"><span class="sz-dim">3⅝″ × 2¼″ × 11⅝″</span></div>
+    <div class="size-cell"><span class="sz-dim">4″ × 2⅔″ × 12″</span></div>
+    <div class="size-cell"><span class="sz-coursing">3 courses = 8″</span><span class="sz-note" style="margin-left:0.75rem">Long format, fewer joints</span></div>
+    <div class="size-cell"><span class="sz-dim">⅜″</span></div>
+  </div>
+
+  <div class="size-row">
+    <div class="size-cell"><div class="sz-name">Engineer Norman</div></div>
+    <div class="size-cell"><span class="sz-dim">3⅝″ × 2¾″ × 11⅝″</span></div>
+    <div class="size-cell"><span class="sz-dim">4″ × 3⅕″ × 12″</span></div>
+    <div class="size-cell"><span class="sz-coursing">5 courses = 16″</span></div>
+    <div class="size-cell"><span class="sz-dim">⅜″</span></div>
+  </div>
+
+  <div class="size-row">
+    <div class="size-cell"><div class="sz-name">Utility</div></div>
+    <div class="size-cell"><span class="sz-dim">3⅝″ × 3⅝″ × 11⅝″</span></div>
+    <div class="size-cell"><span class="sz-dim">4″ × 4″ × 12″</span></div>
+    <div class="size-cell"><span class="sz-coursing">3 courses = 12″</span><span class="sz-note" style="margin-left:0.75rem">Large format, fast lay</span></div>
+    <div class="size-cell"><span class="sz-dim">⅜″</span></div>
+  </div>
+
+  <div class="size-row">
+    <div class="size-cell"><div class="sz-name">King</div></div>
+    <div class="size-cell"><span class="sz-dim">2¾″ × 2¾″ × 9⅝″</span></div>
+    <div class="size-cell"><span class="sz-dim">3⅛″ × 3⅛″ × 10⅛″</span></div>
+    <div class="size-cell"><span class="sz-coursing">5 courses = 16″</span><span class="sz-note" style="margin-left:0.75rem">½″ bed joint</span></div>
+    <div class="size-cell"><span class="sz-dim">½″</span></div>
+  </div>
+
+  <div class="size-row">
+    <div class="size-cell"><div class="sz-name">Queen</div></div>
+    <div class="size-cell"><span class="sz-dim">2¾″ × 2¾″ × 7⅝″</span></div>
+    <div class="size-cell"><span class="sz-dim">3⅛″ × 3⅛″ × 8″</span></div>
+    <div class="size-cell"><span class="sz-coursing">5 courses = 16″</span><span class="sz-note" style="margin-left:0.75rem">½″ bed joint</span></div>
+    <div class="size-cell"><span class="sz-dim">½″</span></div>
+  </div>
+
+  <div class="size-row">
+    <div class="size-cell"><div class="sz-name">Standard (non-modular)</div></div>
+    <div class="size-cell"><span class="sz-dim">3¾″ × 2¼″ × 8″</span></div>
+    <div class="size-cell"><span class="sz-note">No nominal module</span></div>
+    <div class="size-cell"><span class="sz-coursing">3 courses = 8″</span><span class="sz-note" style="margin-left:0.75rem">Older stock; ½″ joint</span></div>
+    <div class="size-cell"><span class="sz-dim">½″</span></div>
+  </div>
+
+</div><!-- #sizes -->
+
+<!-- ─── BRICK TYPES & STANDARDS ────────────────────────────── -->
+<div class="section-head">
+  <div class="section-eyebrow">ASTM Standards · Grades &amp; Types</div>
+  <h2>Brick Types <em>&amp; Standards</em></h2>
+</div>
+
+<div class="type-col-headers">
+  <span>Standard</span>
+  <span>Description &amp; Grades</span>
+  <span>Applications</span>
+</div>
+
+<div id="types">
+
+<!-- Face Brick -->
+<div class="type-row">
+  <div class="cell-type">
+    <div class="type-abbr">ASTM<br>C216</div>
+    <span class="type-std-pill">Face Brick</span>
+    <span class="type-std-pill">Fired Clay</span>
+  </div>
+  <div class="cell-desc">
+    <div class="type-name">Face Brick</div>
+    <div class="type-tags">
+      <span class="tag accent">Most Specified</span>
+      <span class="tag">Exposed Masonry</span>
+      <span class="tag">Clay / Shale</span>
+    </div>
+    <div class="type-spec">
+      <strong>Grades:</strong> SW (Severe Weathering) and MW (Moderate Weathering) — classified by freeze-thaw resistance and water absorption limits.<br>
+      <strong>Types:</strong> FBS (standard), FBX (select, tight dimensional tolerance), FBA (architectural, non-uniform texture/color intentional).<br>
+      <strong>Compressive strength:</strong> Min. 3,000 psi (MW) to 3,000 psi (SW); absorption limits vary by grade.<br>
+      <strong>Color &amp; texture:</strong> Controlled during manufacturing — wire cut, sand-struck, smooth, tumbled, or slurried finishes available.
+    </div>
+    <div class="grade-pills">
+      <span class="grade-pill sw">SW — Severe Weathering</span>
+      <span class="grade-pill mw">MW — Moderate Weathering</span>
+    </div>
+  </div>
+  <div class="cell-suit">
+    <div>
+      <div class="suit-label">Use Where</div>
+      <div class="suit-items">
+        <span class="suit-item">All exposed exterior masonry in freezing climates (SW)</span>
+        <span class="suit-item">Facades, parapets, chimneys, retaining walls</span>
+        <span class="suit-item">Interior feature walls (MW acceptable)</span>
+        <span class="suit-item">Architectural character — FBA for intentional variation</span>
+      </div>
+    </div>
+    <div class="suit-note">Specify SW grade for all exterior work in ASTM weathering index regions above 50 (most of northern US). Verify local weathering region before specifying MW.</div>
+  </div>
+</div>
+
+<!-- Building Brick -->
+<div class="type-row">
+  <div class="cell-type">
+    <div class="type-abbr">ASTM<br>C62</div>
+    <span class="type-std-pill">Building Brick</span>
+    <span class="type-std-pill">Fired Clay</span>
+  </div>
+  <div class="cell-desc">
+    <div class="type-name">Building (Common) Brick</div>
+    <div class="type-tags">
+      <span class="tag">Backup Wythe</span>
+      <span class="tag">Clay / Shale</span>
+      <span class="tag">No Appearance Control</span>
+    </div>
+    <div class="type-spec">
+      <strong>Grades:</strong> SW, MW, and NW (No Weathering — interior use only).<br>
+      <strong>Difference from C216:</strong> No appearance requirements — color, texture, and size variation acceptable. Used where not exposed to view or weather.<br>
+      <strong>Common use:</strong> Backup wythes in cavity wall construction, interior grouted cells, infill. Structural performance similar to face brick at lower cost.<br>
+      <strong>Note:</strong> Not appropriate where aesthetic consistency matters.
+    </div>
+    <div class="grade-pills">
+      <span class="grade-pill sw">SW</span>
+      <span class="grade-pill mw">MW</span>
+      <span class="grade-pill nw">NW — No Weathering (interior)</span>
+    </div>
+  </div>
+  <div class="cell-suit">
+    <div>
+      <div class="suit-label">Use Where</div>
+      <div class="suit-items">
+        <span class="suit-item">Backup wythes in cavity wall or veneer construction</span>
+        <span class="suit-item">Structural masonry not exposed to view</span>
+        <span class="suit-item">Below-grade construction (SW grade required)</span>
+        <span class="suit-item">Cost-saving filler in grouted or reinforced masonry</span>
+      </div>
+    </div>
+    <div class="suit-note">Never specify C62 where the brick will be visible — use C216 FBX or FBS. Below grade, confirm SW grade and bituminous damp-proofing.</div>
+  </div>
+</div>
+
+<!-- Hollow Brick -->
+<div class="type-row">
+  <div class="cell-type">
+    <div class="type-abbr">ASTM<br>C652</div>
+    <span class="type-std-pill">Hollow Brick</span>
+    <span class="type-std-pill">Fired Clay</span>
+  </div>
+  <div class="cell-desc">
+    <div class="type-name">Hollow Brick</div>
+    <div class="type-tags">
+      <span class="tag">Cored</span>
+      <span class="tag">Groutable</span>
+      <span class="tag">Lighter Weight</span>
+    </div>
+    <div class="type-spec">
+      <strong>Core area:</strong> 25–60% of gross cross-sectional area (larger than standard perforations in solid brick).<br>
+      <strong>Grades:</strong> SW and MW, same weathering criteria as C216.<br>
+      <strong>Types:</strong> HBS (standard), HBX (select), HBA (architectural), HBB (building — no appearance control).<br>
+      <strong>Structural:</strong> Cores can be aligned and grouted with rebar for reinforced hollow brick masonry (RHB) — used in seismic zones as an alternative to CMU.
+    </div>
+  </div>
+  <div class="cell-suit">
+    <div>
+      <div class="suit-label">Use Where</div>
+      <div class="suit-items">
+        <span class="suit-item">Reinforced masonry walls in seismic or high-wind zones</span>
+        <span class="suit-item">Load-bearing brick construction needing rebar</span>
+        <span class="suit-item">Weight-sensitive applications vs solid brick</span>
+        <span class="suit-item">Exposed architectural single-wythe walls</span>
+      </div>
+    </div>
+    <div class="suit-note">Grout design and consolidation requirements per MSJC (TMS 602). Confirm core alignment and grout lift heights with structural engineer.</div>
+  </div>
+</div>
+
+<!-- Paving Brick -->
+<div class="type-row">
+  <div class="cell-type">
+    <div class="type-abbr">ASTM<br>C902<br>C1272</div>
+    <span class="type-std-pill">Paving Brick</span>
+    <span class="type-std-pill">Fired Clay</span>
+  </div>
+  <div class="cell-desc">
+    <div class="type-name">Paving Brick</div>
+    <div class="type-tags">
+      <span class="tag">High Abrasion Resistance</span>
+      <span class="tag">Low Absorption</span>
+      <span class="tag">Pedestrian &amp; Vehicular</span>
+    </div>
+    <div class="type-spec">
+      <strong>C902:</strong> Pedestrian and light traffic paving — three classes (SX, MX, NX) based on exposure; three types (PS, PX, PA) based on appearance control. Min. compressive strength 8,000 psi.<br>
+      <strong>C1272:</strong> Heavy vehicular paving brick — higher abrasion resistance and compressive strength requirements (min. 10,000 psi). Use for driveways, loading docks, industrial floors.<br>
+      <strong>Abrasion index:</strong> C902 limits measured by ASTM C418 (sand blast) method; C1272 uses C1353 (abrasion resistance of brick).
+    </div>
+  </div>
+  <div class="cell-suit">
+    <div>
+      <div class="suit-label">Use Where</div>
+      <div class="suit-items">
+        <span class="suit-item">Plazas, walkways, courtyards (C902 SX or MX)</span>
+        <span class="suit-item">Driveways, parking, loading areas (C1272)</span>
+        <span class="suit-item">Historic streetscapes and alleys</span>
+        <span class="suit-item">Interior floors subject to wheeled traffic</span>
+      </div>
+    </div>
+    <div class="suit-note">Set in dry sand (flexible) or mortar (rigid) bed. Flexible set allows easier repair; rigid required for vehicular loading. Specify slip-resistance per project use.</div>
+  </div>
+</div>
+
+<!-- Glazed Brick -->
+<div class="type-row">
+  <div class="cell-type">
+    <div class="type-abbr">ASTM<br>C1405</div>
+    <span class="type-std-pill">Glazed Brick</span>
+    <span class="type-std-pill">Fired Clay</span>
+  </div>
+  <div class="cell-desc">
+    <div class="type-name">Glazed Brick</div>
+    <div class="type-tags">
+      <span class="tag">Ceramic Glaze</span>
+      <span class="tag">Cleanable</span>
+      <span class="tag">Healthcare / Labs</span>
+    </div>
+    <div class="type-spec">
+      <strong>Glaze:</strong> Ceramic or resinous glaze fused to one or more brick faces during kiln firing — creates a non-porous, smooth, washable surface.<br>
+      <strong>Chemical resistance:</strong> Available in acid-resistant grades for laboratory and industrial environments.<br>
+      <strong>Types:</strong> Type I (single-face glazed — wall use), Type II (two or more faces — corner, jamb, and return conditions).<br>
+      <strong>Colors:</strong> Wide palette; custom colors available with larger minimum orders. Color consistency is tighter than unglazed face brick.
+    </div>
+  </div>
+  <div class="cell-suit">
+    <div>
+      <div class="suit-label">Use Where</div>
+      <div class="suit-items">
+        <span class="suit-item">Hospital corridors, kitchens, and clinical areas</span>
+        <span class="suit-item">Schools, locker rooms, and public restrooms</span>
+        <span class="suit-item">Industrial facilities — chemical and acid exposure</span>
+        <span class="suit-item">Transit stations and public interior walls</span>
+      </div>
+    </div>
+    <div class="suit-note">Use non-staining white portland cement mortar — standard mortar can stain glaze. Clean with mild acid wash only if manufacturer-approved. Specify sealant at all movement joints.</div>
+  </div>
+</div>
+
+<!-- Concrete Brick -->
+<div class="type-row">
+  <div class="cell-type">
+    <div class="type-abbr">ASTM<br>C55</div>
+    <span class="type-std-pill">Concrete Brick</span>
+    <span class="type-std-pill">Portland Cement</span>
+  </div>
+  <div class="cell-desc">
+    <div class="type-name">Concrete Brick</div>
+    <div class="type-tags">
+      <span class="tag">Portland Cement</span>
+      <span class="tag">Aggregate</span>
+      <span class="tag">Lower Cost</span>
+    </div>
+    <div class="type-spec">
+      <strong>Composition:</strong> Portland cement, aggregates, and water — molded and cured, not kiln-fired. Dimensional tolerances tighter than fired clay.<br>
+      <strong>Grades:</strong> Grade N (general use, exposed or unexposed) and Grade S (unexposed use only).<br>
+      <strong>Shrinkage:</strong> Concrete brick shrinks as it cures — control joints are required at closer intervals than clay brick. Movement joint spacing per BIA TN-18A.<br>
+      <strong>Color:</strong> Integral pigment; color is consistent and UV-stable but limited palette compared to fired clay. Cannot match the color depth of vitrified clay.
+    </div>
+  </div>
+  <div class="cell-suit">
+    <div>
+      <div class="suit-label">Use Where</div>
+      <div class="suit-items">
+        <span class="suit-item">Projects where clay brick budget is prohibitive</span>
+        <span class="suit-item">Backup wythes and non-exposed masonry</span>
+        <span class="suit-item">Landscape walls and site masonry</span>
+        <span class="suit-item">Applications requiring very tight dimensional tolerance</span>
+      </div>
+    </div>
+    <div class="suit-note">Do not mix clay and concrete brick in the same wythe — differential thermal and moisture movement will crack mortar joints. Specify movement joints at max. 20 ft. o.c. horizontally.</div>
+  </div>
+</div>
+
+</div><!-- #types -->
+
+<!-- ─── MORTAR TYPES ────────────────────────────────────────── -->
+<div class="section-head">
+  <div class="section-eyebrow">ASTM C270 · Mortar for Unit Masonry</div>
+  <h2>Mortar <em>Types</em></h2>
+</div>
+
+<div class="mortar-grid">
+
+  <div class="mortar-card">
+    <div class="mortar-type">M</div>
+    <div class="mortar-strength">2,500 psi min.</div>
+    <div class="mortar-bar-wrap"><div class="mortar-bar" style="width:100%"></div></div>
+    <div class="mortar-detail">
+      <strong>Use:</strong> Below-grade masonry, retaining walls, foundations, sewers, manholes, and masonry in contact with earth. Highest compressive strength.<br><br>
+      High strength makes Type M brittle — not recommended for above-grade exposed brick where some flexibility is needed to accommodate movement.
+    </div>
+    <div class="mortar-ratio">1 portland : ¼ lime : 3 sand<br><em>or</em> 1 portland : 3 sand (no lime)</div>
+    <div class="type-tags">
+      <span class="tag">Below Grade</span>
+      <span class="tag">Retaining Walls</span>
+    </div>
+  </div>
+
+  <div class="mortar-card">
+    <div class="mortar-type">S</div>
+    <div class="mortar-strength">1,800 psi min.</div>
+    <div class="mortar-bar-wrap"><div class="mortar-bar" style="width:75%"></div></div>
+    <div class="mortar-detail">
+      <strong>Use:</strong> Above-grade exterior masonry subject to high lateral loads (wind, seismic), at or below grade with SW brick, and structural masonry. Balances strength and bond.<br><br>
+      High bond strength improves lateral load transfer at bed joints — preferred for reinforced masonry and areas with significant wind pressure.
+    </div>
+    <div class="mortar-ratio">1 portland : ½ lime : 4½ sand<br><em>or</em> 1 portland : ½ masonry cement : 4½ sand</div>
+    <div class="type-tags">
+      <span class="tag accent">Structural Masonry</span>
+      <span class="tag">High Wind / Seismic</span>
+    </div>
+  </div>
+
+  <div class="mortar-card">
+    <div class="mortar-type">N</div>
+    <div class="mortar-strength">750 psi min.</div>
+    <div class="mortar-bar-wrap"><div class="mortar-bar" style="width:50%"></div></div>
+    <div class="mortar-detail">
+      <strong>Use:</strong> General-purpose above-grade exterior and interior masonry. The most widely used mortar for face brick veneer, parapets, and chimneys.<br><br>
+      Lower strength than S or M provides better workability, improved bond, and greater flexibility to accommodate thermal and moisture movement. Preferred by many masons for appearance work.
+    </div>
+    <div class="mortar-ratio">1 portland : 1 lime : 6 sand<br><em>or</em> 1 masonry cement : 3 sand</div>
+    <div class="type-tags">
+      <span class="tag accent">Most Common</span>
+      <span class="tag">Face Brick Veneer</span>
+    </div>
+  </div>
+
+  <div class="mortar-card">
+    <div class="mortar-type">O</div>
+    <div class="mortar-strength">350 psi min.</div>
+    <div class="mortar-bar-wrap"><div class="mortar-bar" style="width:28%"></div></div>
+    <div class="mortar-detail">
+      <strong>Use:</strong> Interior non-load-bearing partitions, and repointing of existing masonry (historic preservation). High lime content — very workable, soft, and forgiving.<br><br>
+      Do not use for exterior masonry subject to freezing — water absorption and low strength make Type O vulnerable to freeze-thaw damage. Excellent for repointing soft historic brick where a stiffer mortar would damage units.
+    </div>
+    <div class="mortar-ratio">1 portland : 2 lime : 9 sand<br><em>or</em> 1 masonry cement : 4½ sand</div>
+    <div class="type-tags">
+      <span class="tag">Interior Only</span>
+      <span class="tag">Repointing</span>
+    </div>
+  </div>
+
+  <div class="mortar-card">
+    <div class="mortar-type">K</div>
+    <div class="mortar-strength">75 psi min.</div>
+    <div class="mortar-bar-wrap"><div class="mortar-bar" style="width:10%"></div></div>
+    <div class="mortar-detail">
+      <strong>Use:</strong> Historic restoration only — soft, lime-based mortar matched to the original mortar in historic brick masonry. Not in ASTM C270; defined by ASTM C1713 for repointing.<br><br>
+      Critical for historic preservation: mortar must always be softer than the brick units. Using Type N or S on historic soft brick will cause spalling — moisture is driven into the unit rather than the sacrificial joint.
+    </div>
+    <div class="mortar-ratio">1 portland : 3 lime : 10–12 sand</div>
+    <div class="type-tags">
+      <span class="tag new">Historic Restoration</span>
+      <span class="tag">ASTM C1713</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ─── MORTAR JOINT PROFILES ──────────────────────────────── -->
+<div class="section-head">
+  <div class="section-eyebrow">BIA Technical Note 8 · Joint Finishing</div>
+  <h2>Mortar Joint <em>Profiles</em></h2>
+</div>
+
+<div class="joint-grid">
+
+  <!--
+    Each SVG is a cross-section through the wall (side view).
+    Left = interior / depth of wall.  Right = exterior face.
+    Two brick courses above + below; mortar joint between them.
+    Face plane at x=140; bricks run full width to x=140.
+    Mortar shape + accent stroke show the profile at the face.
+  -->
+
+  <!-- Concave -->
+  <div class="joint-card">
+    <div class="joint-svg-wrap">
+      <svg viewBox="0 0 180 90" width="100%" xmlns="http://www.w3.org/2000/svg">
+        <!-- axis labels -->
+        <text x="6" y="13" font-size="8" fill="#a09070" font-family="monospace">INT.</text>
+        <text x="148" y="13" font-size="8" fill="#a09070" font-family="monospace">FACE</text>
+        <!-- top brick -->
+        <rect x="0" y="18" width="140" height="22" fill="#c4ad86"/>
+        <!-- bottom brick -->
+        <rect x="0" y="66" width="140" height="22" fill="#c4ad86"/>
+        <!-- mortar: concave curves inward at face -->
+        <path d="M 0,40 L 140,40 Q 110,53 140,66 L 0,66 Z" fill="#e0d4b8"/>
+        <!-- profile surface stroke -->
+        <path d="M 140,40 Q 110,53 140,66" fill="none" stroke="#8a6e48" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- face plane -->
+        <line x1="140" y1="16" x2="140" y2="90" stroke="#b8a898" stroke-width="0.75" stroke-dasharray="3,3"/>
+      </svg>
+    </div>
+    <div class="joint-name">Concave</div>
+    <div class="joint-note">Tooled with a round jointer. Compresses mortar tight against both brick edges — best weather resistance. Standard for all exterior masonry.</div>
+    <span class="joint-rec best">Recommended</span>
+  </div>
+
+  <!-- V-Joint -->
+  <div class="joint-card">
+    <div class="joint-svg-wrap">
+      <svg viewBox="0 0 180 90" width="100%" xmlns="http://www.w3.org/2000/svg">
+        <text x="6" y="13" font-size="8" fill="#a09070" font-family="monospace">INT.</text>
+        <text x="148" y="13" font-size="8" fill="#a09070" font-family="monospace">FACE</text>
+        <rect x="0" y="18" width="140" height="22" fill="#c4ad86"/>
+        <rect x="0" y="66" width="140" height="22" fill="#c4ad86"/>
+        <!-- mortar: V groove at face -->
+        <path d="M 0,40 L 140,40 L 114,53 L 140,66 L 0,66 Z" fill="#e0d4b8"/>
+        <!-- profile surface stroke -->
+        <path d="M 140,40 L 114,53 L 140,66" fill="none" stroke="#8a6e48" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="140" y1="16" x2="140" y2="90" stroke="#b8a898" stroke-width="0.75" stroke-dasharray="3,3"/>
+      </svg>
+    </div>
+    <div class="joint-name">V-Joint</div>
+    <div class="joint-note">Sharp V tooled into the face. Compresses mortar at both brick edges; good weather resistance and a crisp shadow line.</div>
+    <span class="joint-rec best">Recommended</span>
+  </div>
+
+  <!-- Flush -->
+  <div class="joint-card">
+    <div class="joint-svg-wrap">
+      <svg viewBox="0 0 180 90" width="100%" xmlns="http://www.w3.org/2000/svg">
+        <text x="6" y="13" font-size="8" fill="#a09070" font-family="monospace">INT.</text>
+        <text x="148" y="13" font-size="8" fill="#a09070" font-family="monospace">FACE</text>
+        <rect x="0" y="18" width="140" height="22" fill="#c4ad86"/>
+        <rect x="0" y="66" width="140" height="22" fill="#c4ad86"/>
+        <!-- mortar fills to face — flat, untooled -->
+        <rect x="0" y="40" width="140" height="26" fill="#e0d4b8"/>
+        <!-- flat face profile stroke -->
+        <line x1="140" y1="40" x2="140" y2="66" stroke="#8a6e48" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="140" y1="16" x2="140" y2="90" stroke="#b8a898" stroke-width="0.75" stroke-dasharray="3,3"/>
+      </svg>
+    </div>
+    <div class="joint-name">Flush</div>
+    <div class="joint-note">Cut or struck flush with a trowel — not tooled or compressed. Less water-resistant; acceptable interior or under plaster and stucco base coats.</div>
+    <span class="joint-rec">Interior / Under Plaster</span>
+  </div>
+
+  <!-- Weathered -->
+  <div class="joint-card">
+    <div class="joint-svg-wrap">
+      <svg viewBox="0 0 180 90" width="100%" xmlns="http://www.w3.org/2000/svg">
+        <text x="6" y="13" font-size="8" fill="#a09070" font-family="monospace">INT.</text>
+        <text x="148" y="13" font-size="8" fill="#a09070" font-family="monospace">FACE</text>
+        <rect x="0" y="18" width="140" height="22" fill="#c4ad86"/>
+        <rect x="0" y="66" width="140" height="22" fill="#c4ad86"/>
+        <!-- mortar: top recedes, bottom flush — sheds water -->
+        <path d="M 0,40 L 112,40 L 140,66 L 0,66 Z" fill="#e0d4b8"/>
+        <!-- profile surface stroke -->
+        <path d="M 112,40 L 140,66" fill="none" stroke="#8a6e48" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="140" y1="16" x2="140" y2="90" stroke="#b8a898" stroke-width="0.75" stroke-dasharray="3,3"/>
+      </svg>
+    </div>
+    <div class="joint-name">Weathered</div>
+    <div class="joint-note">Top edge recedes inward; bottom projects flush with the face. The projecting lower edge deflects water away from the wall. Good weather performance.</div>
+    <span class="joint-rec best">Good Weather</span>
+  </div>
+
+  <!-- Raked -->
+  <div class="joint-card">
+    <div class="joint-svg-wrap">
+      <svg viewBox="0 0 180 90" width="100%" xmlns="http://www.w3.org/2000/svg">
+        <text x="6" y="13" font-size="8" fill="#a09070" font-family="monospace">INT.</text>
+        <text x="148" y="13" font-size="8" fill="#a09070" font-family="monospace">FACE</text>
+        <rect x="0" y="18" width="140" height="22" fill="#c4ad86"/>
+        <rect x="0" y="66" width="140" height="22" fill="#c4ad86"/>
+        <!-- mortar set back from face; recess shown dark -->
+        <rect x="0" y="40" width="100" height="26" fill="#e0d4b8"/>
+        <rect x="100" y="40" width="40" height="26" fill="#1a120800" opacity="0"/>
+        <!-- recess shadow -->
+        <rect x="100" y="40" width="40" height="26" fill="#2a1e0e" opacity="0.13"/>
+        <!-- profile surface stroke (vertical, set back) -->
+        <line x1="100" y1="40" x2="100" y2="66" stroke="#8a6e48" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="140" y1="16" x2="140" y2="90" stroke="#b8a898" stroke-width="0.75" stroke-dasharray="3,3"/>
+      </svg>
+    </div>
+    <div class="joint-name">Raked</div>
+    <div class="joint-note">Mortar raked back from the face — creates a strong shadow line. The open recess collects water and ice. Avoid on all exterior masonry in freeze-thaw climates.</div>
+    <span class="joint-rec avoid">Avoid Exterior</span>
+  </div>
+
+  <!-- Struck -->
+  <div class="joint-card">
+    <div class="joint-svg-wrap">
+      <svg viewBox="0 0 180 90" width="100%" xmlns="http://www.w3.org/2000/svg">
+        <text x="6" y="13" font-size="8" fill="#a09070" font-family="monospace">INT.</text>
+        <text x="148" y="13" font-size="8" fill="#a09070" font-family="monospace">FACE</text>
+        <rect x="0" y="18" width="140" height="22" fill="#c4ad86"/>
+        <rect x="0" y="66" width="140" height="22" fill="#c4ad86"/>
+        <!-- mortar: top flush, bottom recedes — water ledge at top -->
+        <path d="M 0,40 L 140,40 L 112,66 L 0,66 Z" fill="#e0d4b8"/>
+        <!-- profile surface stroke -->
+        <path d="M 140,40 L 112,66" fill="none" stroke="#8a6e48" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="140" y1="16" x2="140" y2="90" stroke="#b8a898" stroke-width="0.75" stroke-dasharray="3,3"/>
+      </svg>
+    </div>
+    <div class="joint-name">Struck</div>
+    <div class="joint-note">Top edge is flush; bottom slopes inward. The projecting top ledge directs water into the joint rather than away — poor weather performance.</div>
+    <span class="joint-rec avoid">Poor Weather</span>
+  </div>
+
+</div>
+
+<!-- ─── BOND PATTERNS ──────────────────────────────────────── -->
+<div class="section-head">
+  <div class="section-eyebrow">Bond Patterns · Structural &amp; Decorative</div>
+  <h2>Bond <em>Patterns</em></h2>
+</div>
+
+<div class="bond-grid">
+
+  <!-- Running Bond -->
+  <div class="bond-card">
+    <div class="bond-diag">
+      <svg viewBox="0 0 160 80" width="100%" xmlns="http://www.w3.org/2000/svg">
+        <!-- Row 1 -->
+        <rect x="0"   y="2"  width="74" height="18" fill="#c8b89a" rx="1"/>
+        <rect x="82"  y="2"  width="78" height="18" fill="#c8b89a" rx="1"/>
+        <!-- Row 2 -->
+        <rect x="-37" y="24" width="74" height="18" fill="#b8a888" rx="1"/>
+        <rect x="45"  y="24" width="74" height="18" fill="#b8a888" rx="1"/>
+        <rect x="127" y="24" width="74" height="18" fill="#b8a888" rx="1"/>
+        <!-- Row 3 -->
+        <rect x="0"   y="46" width="74" height="18" fill="#c8b89a" rx="1"/>
+        <rect x="82"  y="46" width="78" height="18" fill="#c8b89a" rx="1"/>
+        <!-- Row 4 -->
+        <rect x="-37" y="68" width="74" height="12" fill="#b8a888" rx="1"/>
+        <rect x="45"  y="68" width="74" height="12" fill="#b8a888" rx="1"/>
+        <rect x="127" y="68" width="74" height="12" fill="#b8a888" rx="1"/>
+      </svg>
+    </div>
+    <div class="bond-name">Running Bond</div>
+    <div class="bond-detail">Each course offset ½ brick length. The standard bond for veneer and single-wythe walls. Maximum structural efficiency — all stretchers.</div>
+    <div class="bond-badges">
+      <span class="tag accent">Most Common</span>
+      <span class="tag">Veneer</span>
+    </div>
+  </div>
+
+  <!-- Stack Bond -->
+  <div class="bond-card">
+    <div class="bond-diag">
+      <svg viewBox="0 0 160 80" width="100%" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0"  y="2"  width="74" height="18" fill="#c8b89a" rx="1"/>
+        <rect x="82" y="2"  width="74" height="18" fill="#c8b89a" rx="1"/>
+        <rect x="0"  y="24" width="74" height="18" fill="#b8a888" rx="1"/>
+        <rect x="82" y="24" width="74" height="18" fill="#b8a888" rx="1"/>
+        <rect x="0"  y="46" width="74" height="18" fill="#c8b89a" rx="1"/>
+        <rect x="82" y="46" width="74" height="18" fill="#c8b89a" rx="1"/>
+        <rect x="0"  y="68" width="74" height="12" fill="#b8a888" rx="1"/>
+        <rect x="82" y="68" width="74" height="12" fill="#b8a888" rx="1"/>
+      </svg>
+    </div>
+    <div class="bond-name">Stack Bond</div>
+    <div class="bond-detail">Vertical joints align in all courses. No masonry bond — requires horizontal joint reinforcement at every course or 16″ o.c. max. per code.</div>
+    <div class="bond-badges">
+      <span class="tag">Modern</span>
+      <span class="tag">Rebar Required</span>
+    </div>
+  </div>
+
+  <!-- Flemish Bond -->
+  <div class="bond-card">
+    <div class="bond-diag">
+      <svg viewBox="0 0 160 80" width="100%" xmlns="http://www.w3.org/2000/svg">
+        <!-- Row 1: stretcher-header-stretcher -->
+        <rect x="0"   y="2"  width="48" height="18" fill="#c8b89a" rx="1"/>
+        <rect x="56"  y="2"  width="22" height="18" fill="#a89878" rx="1"/>
+        <rect x="86"  y="2"  width="48" height="18" fill="#c8b89a" rx="1"/>
+        <rect x="142" y="2"  width="22" height="18" fill="#a89878" rx="1"/>
+        <!-- Row 2: header-stretcher-header -->
+        <rect x="-11" y="24" width="22" height="18" fill="#a89878" rx="1"/>
+        <rect x="19"  y="24" width="48" height="18" fill="#b8a888" rx="1"/>
+        <rect x="75"  y="24" width="22" height="18" fill="#a89878" rx="1"/>
+        <rect x="105" y="24" width="48" height="18" fill="#b8a888" rx="1"/>
+        <!-- Row 3 -->
+        <rect x="0"   y="46" width="48" height="18" fill="#c8b89a" rx="1"/>
+        <rect x="56"  y="46" width="22" height="18" fill="#a89878" rx="1"/>
+        <rect x="86"  y="46" width="48" height="18" fill="#c8b89a" rx="1"/>
+        <rect x="142" y="46" width="22" height="18" fill="#a89878" rx="1"/>
+        <!-- Row 4 -->
+        <rect x="-11" y="68" width="22" height="12" fill="#a89878" rx="1"/>
+        <rect x="19"  y="68" width="48" height="12" fill="#b8a888" rx="1"/>
+        <rect x="75"  y="68" width="22" height="12" fill="#a89878" rx="1"/>
+        <rect x="105" y="68" width="48" height="12" fill="#b8a888" rx="1"/>
+      </svg>
+    </div>
+    <div class="bond-name">Flemish Bond</div>
+    <div class="bond-detail">Alternating stretcher and header in each course, headers centered on stretchers above and below. Traditional; strong visual pattern. Headers tie wythes together in solid masonry.</div>
+    <div class="bond-badges">
+      <span class="tag">Traditional</span>
+      <span class="tag">Solid Masonry</span>
+    </div>
+  </div>
+
+  <!-- English Bond -->
+  <div class="bond-card">
+    <div class="bond-diag">
+      <svg viewBox="0 0 160 80" width="100%" xmlns="http://www.w3.org/2000/svg">
+        <!-- Row 1: all stretchers -->
+        <rect x="0"   y="2"  width="48" height="18" fill="#c8b89a" rx="1"/>
+        <rect x="56"  y="2"  width="48" height="18" fill="#c8b89a" rx="1"/>
+        <rect x="112" y="2"  width="48" height="18" fill="#c8b89a" rx="1"/>
+        <!-- Row 2: all headers -->
+        <rect x="0"   y="24" width="22" height="18" fill="#a89878" rx="1"/>
+        <rect x="30"  y="24" width="22" height="18" fill="#a89878" rx="1"/>
+        <rect x="60"  y="24" width="22" height="18" fill="#a89878" rx="1"/>
+        <rect x="90"  y="24" width="22" height="18" fill="#a89878" rx="1"/>
+        <rect x="120" y="24" width="22" height="18" fill="#a89878" rx="1"/>
+        <rect x="150" y="24" width="22" height="18" fill="#a89878" rx="1"/>
+        <!-- Row 3: all stretchers -->
+        <rect x="0"   y="46" width="48" height="18" fill="#c8b89a" rx="1"/>
+        <rect x="56"  y="46" width="48" height="18" fill="#c8b89a" rx="1"/>
+        <rect x="112" y="46" width="48" height="18" fill="#c8b89a" rx="1"/>
+        <!-- Row 4: all headers -->
+        <rect x="11"  y="68" width="22" height="12" fill="#a89878" rx="1"/>
+        <rect x="41"  y="68" width="22" height="12" fill="#a89878" rx="1"/>
+        <rect x="71"  y="68" width="22" height="12" fill="#a89878" rx="1"/>
+        <rect x="101" y="68" width="22" height="12" fill="#a89878" rx="1"/>
+        <rect x="131" y="68" width="22" height="12" fill="#a89878" rx="1"/>
+      </svg>
+    </div>
+    <div class="bond-name">English Bond</div>
+    <div class="bond-detail">Alternating courses of stretchers and headers. Strong structural bond for solid masonry; bold horizontal banding. Traditional for load-bearing walls.</div>
+    <div class="bond-badges">
+      <span class="tag">Load-Bearing</span>
+      <span class="tag">Traditional</span>
+    </div>
+  </div>
+
+  <!-- Common Bond (American Bond) -->
+  <div class="bond-card">
+    <div class="bond-diag">
+      <svg viewBox="0 0 160 80" width="100%" xmlns="http://www.w3.org/2000/svg">
+        <!-- Rows 1-4: stretchers (running bond) -->
+        <rect x="0"   y="2"  width="48" height="14" fill="#c8b89a" rx="1"/>
+        <rect x="56"  y="2"  width="48" height="14" fill="#c8b89a" rx="1"/>
+        <rect x="112" y="2"  width="48" height="14" fill="#c8b89a" rx="1"/>
+        <rect x="-24" y="20" width="48" height="14" fill="#b8a888" rx="1"/>
+        <rect x="32"  y="20" width="48" height="14" fill="#b8a888" rx="1"/>
+        <rect x="88"  y="20" width="48" height="14" fill="#b8a888" rx="1"/>
+        <rect x="144" y="20" width="48" height="14" fill="#b8a888" rx="1"/>
+        <!-- Header course -->
+        <rect x="0"   y="38" width="22" height="14" fill="#a89878" rx="1"/>
+        <rect x="30"  y="38" width="22" height="14" fill="#a89878" rx="1"/>
+        <rect x="60"  y="38" width="22" height="14" fill="#a89878" rx="1"/>
+        <rect x="90"  y="38" width="22" height="14" fill="#a89878" rx="1"/>
+        <rect x="120" y="38" width="22" height="14" fill="#a89878" rx="1"/>
+        <rect x="150" y="38" width="22" height="14" fill="#a89878" rx="1"/>
+        <!-- More stretchers -->
+        <rect x="0"   y="56" width="48" height="14" fill="#c8b89a" rx="1"/>
+        <rect x="56"  y="56" width="48" height="14" fill="#c8b89a" rx="1"/>
+        <rect x="112" y="56" width="48" height="14" fill="#c8b89a" rx="1"/>
+        <rect x="-24" y="68" width="48" height="12" fill="#b8a888" rx="1"/>
+        <rect x="32"  y="68" width="48" height="12" fill="#b8a888" rx="1"/>
+        <rect x="88"  y="68" width="48" height="12" fill="#b8a888" rx="1"/>
+      </svg>
+    </div>
+    <div class="bond-name">Common Bond</div>
+    <div class="bond-detail">Running bond with a header course every 5th or 6th course. Economical version of English bond — structural tie at intervals with faster-laying stretcher courses between.</div>
+    <div class="bond-badges">
+      <span class="tag">Economical</span>
+      <span class="tag">Solid Masonry</span>
+    </div>
+  </div>
+
+  <!-- 1/3 Running Bond -->
+  <div class="bond-card">
+    <div class="bond-diag">
+      <svg viewBox="0 0 160 80" width="100%" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0"   y="2"  width="48" height="18" fill="#c8b89a" rx="1"/>
+        <rect x="56"  y="2"  width="48" height="18" fill="#c8b89a" rx="1"/>
+        <rect x="112" y="2"  width="48" height="18" fill="#c8b89a" rx="1"/>
+        <rect x="16"  y="24" width="48" height="18" fill="#b8a888" rx="1"/>
+        <rect x="72"  y="24" width="48" height="18" fill="#b8a888" rx="1"/>
+        <rect x="128" y="24" width="48" height="18" fill="#b8a888" rx="1"/>
+        <rect x="32"  y="46" width="48" height="18" fill="#c8b89a" rx="1"/>
+        <rect x="88"  y="46" width="48" height="18" fill="#c8b89a" rx="1"/>
+        <rect x="144" y="46" width="48" height="18" fill="#c8b89a" rx="1"/>
+        <rect x="0"   y="68" width="48" height="12" fill="#b8a888" rx="1"/>
+        <rect x="56"  y="68" width="48" height="12" fill="#b8a888" rx="1"/>
+        <rect x="112" y="68" width="48" height="12" fill="#b8a888" rx="1"/>
+      </svg>
+    </div>
+    <div class="bond-name">⅓ Running Bond</div>
+    <div class="bond-detail">Each course offset ⅓ brick length. Diagonal joint lines result — commonly used for longer brick (Norman, Roman) where ½ offset looks awkward.</div>
+    <div class="bond-badges">
+      <span class="tag">Long Brick</span>
+      <span class="tag">Diagonal Lines</span>
+    </div>
+  </div>
+
+  <!-- Herringbone -->
+  <div class="bond-card">
+    <div class="bond-diag">
+      <svg viewBox="0 0 160 80" width="100%" xmlns="http://www.w3.org/2000/svg">
+        <!-- Simplified herringbone pattern -->
+        <rect x="10"  y="5"  width="36" height="14" fill="#c8b89a" rx="1" transform="rotate(45 28 12)"/>
+        <rect x="40"  y="5"  width="36" height="14" fill="#b8a888" rx="1" transform="rotate(-45 58 12)"/>
+        <rect x="70"  y="5"  width="36" height="14" fill="#c8b89a" rx="1" transform="rotate(45 88 12)"/>
+        <rect x="100" y="5"  width="36" height="14" fill="#b8a888" rx="1" transform="rotate(-45 118 12)"/>
+        <rect x="10"  y="40" width="36" height="14" fill="#b8a888" rx="1" transform="rotate(-45 28 47)"/>
+        <rect x="40"  y="40" width="36" height="14" fill="#c8b89a" rx="1" transform="rotate(45 58 47)"/>
+        <rect x="70"  y="40" width="36" height="14" fill="#b8a888" rx="1" transform="rotate(-45 88 47)"/>
+        <rect x="100" y="40" width="36" height="14" fill="#c8b89a" rx="1" transform="rotate(45 118 47)"/>
+      </svg>
+    </div>
+    <div class="bond-name">Herringbone</div>
+    <div class="bond-detail">Bricks laid at 45° in alternating directions. Used for paving, floor patterns, and decorative wall panels. Not suitable for structural wythe construction.</div>
+    <div class="bond-badges">
+      <span class="tag">Paving</span>
+      <span class="tag">Decorative</span>
+    </div>
+  </div>
+
+  <!-- Basket Weave -->
+  <div class="bond-card">
+    <div class="bond-diag">
+      <svg viewBox="0 0 160 80" width="100%" xmlns="http://www.w3.org/2000/svg">
+        <!-- 2×1 basket weave pairs -->
+        <rect x="2"  y="2"  width="36" height="16" fill="#c8b89a" rx="1"/>
+        <rect x="2"  y="20" width="36" height="16" fill="#b0a080" rx="1"/>
+        <rect x="42" y="2"  width="16" height="34" fill="#a89878" rx="1"/>
+        <rect x="62" y="2"  width="36" height="16" fill="#c8b89a" rx="1"/>
+        <rect x="62" y="20" width="36" height="16" fill="#b0a080" rx="1"/>
+        <rect x="102" y="2" width="16" height="34" fill="#a89878" rx="1"/>
+        <rect x="122" y="2" width="36" height="16" fill="#c8b89a" rx="1"/>
+        <rect x="122" y="20" width="36" height="16" fill="#b0a080" rx="1"/>
+        <!-- Row 2 reverse -->
+        <rect x="2"  y="40" width="16" height="34" fill="#a89878" rx="1"/>
+        <rect x="22" y="40" width="36" height="16" fill="#c8b89a" rx="1"/>
+        <rect x="22" y="58" width="36" height="16" fill="#b0a080" rx="1"/>
+        <rect x="62" y="40" width="16" height="34" fill="#a89878" rx="1"/>
+        <rect x="82" y="40" width="36" height="16" fill="#c8b89a" rx="1"/>
+        <rect x="82" y="58" width="36" height="16" fill="#b0a080" rx="1"/>
+        <rect x="122" y="40" width="16" height="34" fill="#a89878" rx="1"/>
+        <rect x="142" y="40" width="36" height="16" fill="#c8b89a" rx="1"/>
+      </svg>
+    </div>
+    <div class="bond-name">Basket Weave</div>
+    <div class="bond-detail">Pairs of bricks alternating horizontal and vertical. Traditional paving pattern; also used for decorative wall panels and garden paths.</div>
+    <div class="bond-badges">
+      <span class="tag">Paving</span>
+      <span class="tag">Decorative</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ─── COLOR PALETTE ──────────────────────────────────────── -->
+<div class="section-head">
+  <div class="section-eyebrow">Material &amp; Firing · Common Color Ranges</div>
+  <h2>Brick <em>Color &amp; Texture</em></h2>
+</div>
+
+<div class="color-band">
+
+  <div class="color-swatch">
+    <div class="swatch-block" style="background: #c8765a;"></div>
+    <div class="swatch-info">
+      <div class="swatch-name">Red / Salmon</div>
+      <div class="swatch-desc">Classic US face brick; high iron oxide content; common in mid-Atlantic and Midwest.</div>
+    </div>
+  </div>
+
+  <div class="color-swatch">
+    <div class="swatch-block" style="background: #8c4a2a;"></div>
+    <div class="swatch-info">
+      <div class="swatch-name">Deep Red / Cordovan</div>
+      <div class="swatch-desc">High-fired red clay; rich color with vitrified surface; denser and lower absorption.</div>
+    </div>
+  </div>
+
+  <div class="color-swatch">
+    <div class="swatch-block" style="background: #b88a5a;"></div>
+    <div class="swatch-info">
+      <div class="swatch-name">Buff / Tan</div>
+      <div class="swatch-desc">Low iron; common in Southwest and Great Plains; used for limestone-compatible palettes.</div>
+    </div>
+  </div>
+
+  <div class="color-swatch">
+    <div class="swatch-block" style="background: #d4b870;"></div>
+    <div class="swatch-info">
+      <div class="swatch-name">Yellow / Gold</div>
+      <div class="swatch-desc">High calcium and magnesium; associated with Midwestern clay deposits.</div>
+    </div>
+  </div>
+
+  <div class="color-swatch">
+    <div class="swatch-block" style="background: #6a7a5a;"></div>
+    <div class="swatch-info">
+      <div class="swatch-name">Gray / Sage</div>
+      <div class="swatch-desc">Shale-based or high-firing reduction atmosphere; used in contemporary and industrial palettes.</div>
+    </div>
+  </div>
+
+  <div class="color-swatch">
+    <div class="swatch-block" style="background: #2e2820;"></div>
+    <div class="swatch-info">
+      <div class="swatch-name">Charcoal / Black</div>
+      <div class="swatch-desc">Manganese or iron-manganese; very high-fired; dense and vitrified. Modern and industrial use.</div>
+    </div>
+  </div>
+
+  <div class="color-swatch">
+    <div class="swatch-block" style="background: #b8a490; background: repeating-linear-gradient(135deg, #c8b89a 0px, #c8b89a 8px, #a08070 8px, #a08070 12px, #c8b89a 12px);"></div>
+    <div class="swatch-info">
+      <div class="swatch-name">Blended / Variegated</div>
+      <div class="swatch-desc">Mixed lots with intentional color variation — FBA type. Adds depth; traditional and historic character.</div>
+    </div>
+  </div>
+
+  <div class="color-swatch">
+    <div class="swatch-block" style="background: #e0d8c8;"></div>
+    <div class="swatch-info">
+      <div class="swatch-name">White / Cream</div>
+      <div class="swatch-desc">Painted, glazed, or light-firing clay. White glazed brick per ASTM C1405; painted requires sealant.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ─── TEXTURE NOTE ───────────────────────────────────────── -->
+<div style="display:grid; grid-template-columns:repeat(4,1fr); border-bottom:1px solid var(--rule);">
+
+  <div style="padding:1.5rem; border-right:1px solid var(--rule);">
+    <div class="suit-label">Wire Cut</div>
+    <div style="font-size:0.78rem; color:var(--ink-muted); line-height:1.6;">Column of extruded clay cut with wire — rough, dragged texture. Exposes aggregate. Most common commercial face brick finish.</div>
+  </div>
+
+  <div style="padding:1.5rem; border-right:1px solid var(--rule);">
+    <div class="suit-label">Sand Struck</div>
+    <div style="font-size:0.78rem; color:var(--ink-muted); line-height:1.6;">Mold-cast with sand release agent; smooth faces with slight irregularity. Traditional; used in historic and residential work.</div>
+  </div>
+
+  <div style="padding:1.5rem; border-right:1px solid var(--rule);">
+    <div class="suit-label">Smooth / Die Skin</div>
+    <div style="font-size:0.78rem; color:var(--ink-muted); line-height:1.6;">Extruded without wire cutting — very smooth face. Often used for glazed brick base and contemporary clean-line facades.</div>
+  </div>
+
+  <div style="padding:1.5rem;">
+    <div class="suit-label">Tumbled / Handmade</div>
+    <div style="font-size:0.78rem; color:var(--ink-muted); line-height:1.6;">Tumbled after firing for chipped edges and worn appearance. Or hand-molded for authentic historic character. Higher cost and color variability.</div>
+  </div>
+
+</div>
+
+<div class="disclaimer">
+  <p><strong>For reference only.</strong> Sizes and coursing shown are ASTM/BIA standard — verify against manufacturer published sizes before detailing. Mortar type selection depends on weathering region, structural requirements, and existing masonry compatibility. Consult ASTM C270, BIA Technical Notes, and your AHJ before specifying. For historic preservation work, require mortar testing to match existing joint composition per ASTM C1713.</p>
+</div>
+
+<footer>
+  <p>ASTM C216 / C62 / C652 / C902 / C1272 / C55 / C270 &nbsp;|&nbsp; BIA TECH NOTES &nbsp;|&nbsp; TMS 402 / 602 &nbsp;|&nbsp; FOR REFERENCE ONLY</p>
+  <a href="../index.html">← ArchOS</a>
+</footer>
+
+</body>
+</html>
